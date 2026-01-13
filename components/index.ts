@@ -9,7 +9,6 @@ export {default as CategorySelect} from './ui/CategorySelect';
 export {default as ImageUpload} from './ui/ImageUpload';
 export {default as LocationSelector} from './ui/LocationSelector';
 export type { LocationData } from './ui/LocationSelector';
-export {default as TicketPurchaseModal} from './ui/TicketPurchaseModal';
 // forms
 export {default as AppForm} from './form/AppForm';
 export {default as AppFormField} from './form/AppFormField';
