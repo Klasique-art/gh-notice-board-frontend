@@ -25,3 +25,33 @@ export {default as FeaturedOpportunitiesSection} from './home/FeaturedOpportunit
 export {default as BreakingNewsSection} from './home/BreakingNewsSection';
 export {default as UpcomingEventsSection} from './home/UpcomingEventsSection';
 export {default as CTASection} from './home/CTASection';
+// news
+export {default as NewsHero} from './news/NewsHero';
+export {default as NewsCard} from './news/NewsCard';
+export {default as NewsGrid} from './news/NewsGrid';
+export {default as NewsFilters} from './news/NewsFilters';
+export {default as NewsSortTabs} from './news/NewsSortTabs';
+export {default as BreakingNewsBar} from './news/BreakingNewsBar';
+export {default as NewsEmptyState} from './news/NewsEmptyState';
+export {default as NewsPageContent} from './NewsPageContent';
+// dashboard
+export {default as DashboardNav} from './dashboard/DashboardNav';
+export {default as DashboardSideBar} from './dashboard/DashboardSideBar';
+export {default as DashboardTopBar} from './dashboard/DashboardTopBar';
+export {default as ProfileCard} from './dashboard/ProfileCard';
+// events
+export {default as EventCard} from './events/EventCard';
+export {default as EventFilters} from './events/EventFilters';
+export {default as EventGrid} from './events/EventGrid';
+export {default as EventHero} from './events/EventHero';
+export {default as EventSortTabs} from './events/EventSortTabs';
+export {default as EventEmptyState} from './events/EventEmptyState';
+export {default as EventPageContent} from './events/EventPageContent';
+// opportunities
+export {default as OpportunityCard} from './Opportunities/OpportunityCard';
+export {default as OpportunityFilters} from './Opportunities/OpportunityFilters';
+export {default as OpportunityGrid} from './Opportunities/OpportunityGrid';
+export {default as OpportunityHero} from './Opportunities/OpportunityHero';
+export {default as OpportunitySortTabs} from './Opportunities/OpportunitySortTabs';
+export {default as OpportunityEmptyState} from './Opportunities/OpportunityEmptyState';
+export {default as OpportunityPageContent} from './Opportunities/OpportunityPageContent';

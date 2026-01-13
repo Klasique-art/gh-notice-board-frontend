@@ -198,7 +198,7 @@ const Navbar = ({ isLoggedIn = false, currentUser = null }: NavBarProps) => {
                                                 transition-all duration-300
                                                 ${showBg ? 'text-white' : 'text-black'}
                                                 ${isActive
-                                                    ? 'bg-accent shadow-md border border-accent'
+                                                    ? 'bg-primary shadow-md border border-primary text-slate-100'
                                                     : 'hover:bg-primary-100 hover:text-slate-100 border border-transparent'
                                                 }
                                             `}
