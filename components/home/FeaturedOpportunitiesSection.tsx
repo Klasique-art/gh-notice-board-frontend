@@ -1,4 +1,4 @@
-import {Section} from "@/components";
+import { Section } from "@/components";
 import Image from "next/image";
 import Link from "next/link";
 import { Briefcase, MapPin, Clock, ArrowRight, Globe } from "lucide-react";
@@ -79,17 +79,10 @@ const FeaturedOpportunitiesSection = ({ opportunities }: FeaturedOpportunitiesSe
                             </div>
 
                             {/* Salary/Funding */}
-                            {opportunity.salary_min && (
+                            {opportunity.salary_range && opportunity.show_salary && (
                                 <div className="pt-2 border-t border-slate-200">
                                     <span className="normal-text-2 font-bold text-primary">
-                                        {new Intl.NumberFormat("en-GH", {
-                                            style: "currency",
-                                            currency: opportunity.salary_currency,
-                                        }).format(opportunity.salary_min)}
-                                        {opportunity.salary_max && ` - ${new Intl.NumberFormat("en-GH", {
-                                            style: "currency",
-                                            currency: opportunity.salary_currency,
-                                        }).format(opportunity.salary_max)}`}
+                                        {opportunity.salary_range}
                                     </span>
                                 </div>
                             )}
