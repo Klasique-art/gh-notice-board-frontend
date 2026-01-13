@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Menu, X, Plus } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import { placeholderPic } from '@/data/constants';
 import { navLinks, profileMenuItems } from "@/data/static.general";
@@ -173,10 +173,10 @@ const Navbar = ({ isLoggedIn = false, currentUser = null }: NavBarProps) => {
                                     />
                                 </div>
                                 <div className="hidden sm:block">
-                                    <h1 className="big-text-5 font-bold text-white">
+                                    <h1 className={`big-text-5 font-bold ${showBg ? 'text-white' : 'text-black'}`}>
                                         Ghana notice board
                                     </h1>
-                                    <p className="small-text-2 text-slate-200 -mt-1">
+                                    <p className={`small-text-2 ${showBg ? 'text-slate-200' : 'text-black'} -mt-1`}>
                                         Your Event Partner
                                     </p>
                                 </div>
@@ -192,13 +192,14 @@ const Navbar = ({ isLoggedIn = false, currentUser = null }: NavBarProps) => {
                                             key={link.id}
                                             href={link.url}
                                             className={`
-                                                px-4 py-2 rounded-lg
+                                                px-3 py-1 rounded-lg
                                                 normal-text font-medium
                                                 flex items-center gap-2
                                                 transition-all duration-300
+                                                ${showBg ? 'text-white' : 'text-black'}
                                                 ${isActive
-                                                    ? 'bg-accent text-white shadow-md border border-accent'
-                                                    : 'text-white hover:bg-primary-100 hover:text-slate-100 border border-transparent'
+                                                    ? 'bg-accent shadow-md border border-accent'
+                                                    : 'hover:bg-primary-100 hover:text-slate-100 border border-transparent'
                                                 }
                                             `}
                                         >
@@ -214,18 +215,6 @@ const Navbar = ({ isLoggedIn = false, currentUser = null }: NavBarProps) => {
                         <div className="flex items-center gap-3">
                             {isLoggedIn ? (
                                 <>
-                                    {/* Create Event Button - Desktop */}
-                                    <div className="hidden sm:block">
-                                        <AppButton
-                                            title="Create Event"
-                                            url="/dashboard/events/create"
-                                            variant="primary"
-                                            size="md"
-                                            icon={<Plus className="w-4 h-4" />}
-                                            iconPosition="left"
-                                        />
-                                    </div>
-
                                     {/* Profile Dropdown */}
                                     <ProfileDropdown
                                         image={currentUser?.cover_image || placeholderPic}

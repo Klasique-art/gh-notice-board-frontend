@@ -86,7 +86,7 @@ const Footer = () => {
                 <div className="mx-auto max-w-7xl">
 
                     {/* Main Footer Grid */}
-                    <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4 mb-10">
+                    <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
                         {/* Column 1: Branding */}
                         <div className="space-y-4">
                             <Link href="/" className="inline-block group">
@@ -97,18 +97,18 @@ const Footer = () => {
                                             height={64}
                                             src="/assets/logo.png"
                                             className="w-full h-full object-cover"
-                                            alt="Cafa Tickets logo"
+                                            alt="Ghana notice board logo"
                                         />
                                     </figure>
                                     <div>
-                                        <h2 className="big-text-4 font-bold text-white">Cafa Tickets</h2>
+                                        <h2 className="big-text-4 font-bold text-white">Ghana Notice Board</h2>
                                         <p className="small-text text-blue-200">Your Event Partner</p>
                                     </div>
                                 </div>
                             </Link>
                             
                             <p className="normal-text-2 text-blue-100 leading-relaxed">
-                                Ghana&apos;s premier event ticketing platform. Discover, book, and experience unforgettable moments.
+                                Ghana&apos;s premier community platform. Discover news, events, and opportunities that matter.
                             </p>
                             
                             {/* Social Links */}
@@ -191,7 +191,7 @@ const Footer = () => {
                         </div>
 
                         {/* Column 4: Newsletter & Legal */}
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             <div>
                                 <h3 className="big-text-5 font-bold mb-6 text-white flex items-center gap-2">
                                     <span className="w-1 h-6 bg-linear-to-b from-purple-400 to-blue-400 rounded-full"></span>
@@ -253,7 +253,7 @@ const Footer = () => {
                             </div>
 
                             <div>
-                                <h3 className="big-text-5 font-bold mb-2 text-white">Legal</h3>
+                                <h3 className="big-text-5 font-bold text-white">Legal</h3>
                                 <ul className="space-y-3">
                                     <li>
                                         <Link
@@ -274,23 +274,6 @@ const Footer = () => {
                                         </Link>
                                     </li>
                                 </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom Bar */}
-                    <div className="pt-6 border-t border-white/10">
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                            <p className="small-text text-blue-200 text-center md:text-left">
-                                &copy; {new Date().getFullYear()} Cafa Tickets. All rights reserved.
-                            </p>
-                            <div className="flex items-center gap-6">
-                                <Link href="/sitemap" className="small-text text-blue-200 hover:text-white transition-colors duration-300">
-                                    Sitemap
-                                </Link>
-                                <Link href="/accessibility" className="small-text text-blue-200 hover:text-white transition-colors duration-300">
-                                    Accessibility
-                                </Link>
                             </div>
                         </div>
                     </div>

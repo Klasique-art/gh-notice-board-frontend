@@ -100,7 +100,7 @@ const ProfileDropdown = ({
             <button
                 ref={buttonRef}
                 onClick={toggleDropdown}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-full bg-linear-to-br from-primary to-primary-100 hover:from-primary-100 hover:to-primary-200 border border-accent transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 group"
+                className="flex items-center gap-2 px-2 py-1 rounded-lg bg-linear-to-br from-primary to-primary-100 hover:from-primary-100 hover:to-primary-200 border border-accent transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 group"
                 aria-haspopup="true"
                 aria-expanded={open}
                 aria-label="Open user menu"
@@ -132,10 +132,10 @@ const ProfileDropdown = ({
                     ref={dropdownRef}
                     role="menu"
                     aria-label="Profile dropdown"
-                    className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl ring-1 ring-accent focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                    className="absolute right-0 mt-3 w-72 bg-white rounded-lg shadow-2xl ring-1 ring-accent focus:outline-none z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
                 >
                     {/* User Info Header */}
-                    <div className="px-4 py-3 bg-linear-to-br from-primary via-primary-100 to-primary-200 border-b border-accent">
+                    <div className="px-4 py-3 bg-primary border-b border-accent">
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <div className="w-12 h-12 rounded-full ring-2 ring-accent/50 overflow-hidden">
@@ -162,18 +162,13 @@ const ProfileDropdown = ({
                     </div>
 
                     {/* Menu Items */}
-                    <ul className="py-2 bg-primary" role="none">
+                    <ul className="py-0 bg-white" role="none">
                         {menuItems.map((item: MenuItem, idx: number) => {
                             const isLogout = item.isLogout;
                             const IconComponent = item.icon;
 
                             return (
                                 <React.Fragment key={idx}>
-                                    {isLogout && (
-                                        <div className="mt-2 px-3">
-                                            <hr className="border-accent" role="separator" />
-                                        </div>
-                                    )}
                                     <li>
                                         {item.link ? (
                                             <Link
@@ -187,7 +182,7 @@ const ProfileDropdown = ({
                                                     group
                                                     ${isLogout 
                                                         ? 'text-accent-50 hover:bg-accent/20 hover:text-accent focus:bg-accent/20 focus:text-accent' 
-                                                        : 'text-white hover:bg-primary-100 hover:text-slate-100 focus:bg-primary-100 focus:text-slate-100'
+                                                        : 'text-black hover:bg-primary-100 hover:text-slate-100 focus:bg-primary-100 focus:text-slate-100'
                                                     }
                                                     focus:outline-none
                                                 `}
@@ -198,7 +193,7 @@ const ProfileDropdown = ({
                                                         <span 
                                                             className={`
                                                                 w-6 h-6 small-text rounded-md  flex items-center justify-center
-                                                                ${isLogout ? 'bg-accent/20 text-accent' : 'bg-accent text-white'}
+                                                                ${isLogout ? 'bg-accent/20 text-accent' : 'bg-primary text-secondary'}
                                                                 group-hover:scale-110 transition-transform duration-200
                                                             `}
                                                             aria-hidden="true"
@@ -229,8 +224,9 @@ const ProfileDropdown = ({
                                                     transition-all duration-200
                                                     cursor-pointer
                                                     group
+                                                    bg-primary
                                                     ${isLogout 
-                                                        ? 'text-accent-50 hover:bg-accent/20 focus:bg-accent/20 hover:text-accent focus:text-accent' 
+                                                        ? 'text-white font-bold' 
                                                         : 'text-white hover:bg-primary-100 hover:text-slate-100 focus:bg-primary-100 focus:text-slate-100'
                                                     }
                                                     focus:outline-none
@@ -242,7 +238,7 @@ const ProfileDropdown = ({
                                                         <span 
                                                             className={`
                                                                 w-8 h-8 rounded-lg flex items-center justify-center
-                                                                ${isLogout ? 'bg-accent/20 text-accent' : 'bg-accent text-white'}
+                                                                ${isLogout ? 'bg-accent/20 text-secondary' : 'bg-secondary text-white'}
                                                                 group-hover:scale-110 transition-transform duration-200
                                                             `}
                                                             aria-hidden="true"

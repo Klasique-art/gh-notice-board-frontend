@@ -1,10 +1,12 @@
 import {
-    FaMobile,
+    FaHome,
+    FaNewspaper,
     FaCalendarAlt,
+    FaBriefcase,
+    FaGlobe,
+    FaBullhorn,
     FaSignOutAlt, 
     FaTicketAlt,
-    FaHistory,
-    FaHome, 
     FaCogs, 
     FaUser,
     FaCreditCard,
@@ -15,10 +17,18 @@ import {
     FaYoutube,
 } from 'react-icons/fa6';
 import { MdDashboard, MdCalendarMonth } from "react-icons/md";
+import { Newspaper, Briefcase, Calendar, Megaphone, Globe, GraduationCap, Heart, TrendingUp } from "lucide-react";
 
 import { NavLink, ProfileMenuItem, DashboardSideLink, PolicySection, TermSection } from "@/types/general.types";
+import { Category } from "@/types/general.types";
 
 export const navLinks: NavLink[] = [
+    {
+        id: 2,
+        name: "News",
+        url: "/news",
+        icon: <FaNewspaper />,
+    },
     {
         id: 3,
         name: "Events",
@@ -27,15 +37,21 @@ export const navLinks: NavLink[] = [
     },
     {
         id: 4,
-        name: "Contact us",
-        url: "/contact",
-        icon: <FaMobile />,
+        name: "Opportunities",
+        url: "/opportunities",
+        icon: <FaBriefcase />,
     },
     {
         id: 5,
-        name: "Events History",
-        url: "/events/history",
-        icon: <FaHistory />,
+        name: "Diaspora",
+        url: "/diaspora",
+        icon: <FaGlobe />,
+    },
+    {
+        id: 6,
+        name: "Announcements",
+        url: "/announcements",
+        icon: <FaBullhorn />,
     },
 ];
 
@@ -58,8 +74,8 @@ export const contactInfo = [
     {
         id: 1,
         label: "Email",
-        value: "info@cafaticket.com",
-        href: "mailto:info@cafaticket.com",
+        value: "info@gnb.com",
+        href: "mailto:info@gnb.com",
     },
     // {
     //     id: 2,
@@ -499,4 +515,79 @@ export const termsOfService: TermSection[] = [
             "We are committed to addressing your inquiries and resolving issues promptly."
         ]
     }
+];
+
+export const categories: Category[] = [
+    {
+        id: 1,
+        name: "News",
+        slug: "news",
+        icon: Newspaper,
+        description: "Latest updates",
+        color: "bg-accent",
+        textColor: "text-accent",
+    },
+    {
+        id: 2,
+        name: "Jobs",
+        slug: "opportunities?type=job",
+        icon: Briefcase,
+        description: "Career opportunities",
+        color: "bg-primary",
+        textColor: "text-primary",
+    },
+    {
+        id: 3,
+        name: "Events",
+        slug: "events",
+        icon: Calendar,
+        description: "Community gatherings",
+        color: "bg-secondary",
+        textColor: "text-primary",
+    },
+    {
+        id: 4,
+        name: "Scholarships",
+        slug: "opportunities?type=scholarship",
+        icon: GraduationCap,
+        description: "Education funding",
+        color: "bg-primary-100",
+        textColor: "text-primary-100",
+    },
+    {
+        id: 5,
+        name: "Diaspora",
+        slug: "diaspora",
+        icon: Globe,
+        description: "For Ghanaians abroad",
+        color: "bg-accent-100",
+        textColor: "text-accent-100",
+    },
+    {
+        id: 6,
+        name: "Announcements",
+        slug: "announcements",
+        icon: Megaphone,
+        description: "Official notices",
+        color: "bg-secondary",
+        textColor: "text-primary",
+    },
+    {
+        id: 7,
+        name: "Grants",
+        slug: "opportunities?type=grant",
+        icon: Heart,
+        description: "Funding programs",
+        color: "bg-primary-200",
+        textColor: "text-primary-200",
+    },
+    {
+        id: 8,
+        name: "Trending",
+        slug: "trending",
+        icon: TrendingUp,
+        description: "What's hot now",
+        color: "bg-accent",
+        textColor: "text-accent",
+    },
 ];

@@ -1,22 +1,21 @@
-// import { Landing, HomeCategoryBar, SoonEvents, HomeEvents, StatsSection } from "@/components"
-import { Landing } from "@/components"
-// import { getEventCategories, getPublicStats } from "../lib/general"
-// import { getEvents } from "../lib/events";
+import { Landing, BreakingNewsSection, FeaturedOpportunitiesSection, UpcomingEventsSection, CategoriesSection, CTASection } from "@/components"
+import { mockNews } from "@/data/mockNews"
+import { mockOpportunities } from "@/data/mockOpportunities"
+import { mockEvents } from "@/data/mockEvents"
 
 const HomePage = async () => {
-    // const [categories, events, statsData] = await Promise.all([
-    //     getEventCategories(),
-    //     getEvents({ status: 'upcoming', ordering: 'start_date', page: 1 }),
-    //     getPublicStats()
-    // ]);
+    const breakingNews = mockNews;
+    const featuredOpportunities = mockOpportunities;
+    const upcomingEvents = mockEvents;
 
     return (
         <main>
             <Landing />
-            {/* <StatsSection stats={statsData?.data || null} /> */}
-            {/* <HomeCategoryBar eventCategories={categories} /> */}
-            {/* <SoonEvents events={events.results} /> */}
-            {/* <HomeEvents events={events.results} /> */}
+            <BreakingNewsSection articles={breakingNews} />
+            <FeaturedOpportunitiesSection opportunities={featuredOpportunities} />
+            <UpcomingEventsSection events={upcomingEvents} />
+            <CategoriesSection />
+            <CTASection />
         </main>
     )
 }
