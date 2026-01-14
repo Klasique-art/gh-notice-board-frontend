@@ -55,3 +55,11 @@ export {default as OpportunityHero} from './Opportunities/OpportunityHero';
 export {default as OpportunitySortTabs} from './Opportunities/OpportunitySortTabs';
 export {default as OpportunityEmptyState} from './Opportunities/OpportunityEmptyState';
 export {default as OpportunityPageContent} from './Opportunities/OpportunityPageContent';
+// diaspora
+export {default as DiasporaCard} from './diaspora/DiasporaCard';
+export {default as DiasporaFilters} from './diaspora/DiasporaFilters';
+export {default as DiasporaGrid} from './diaspora/DiasporaGrid';
+export {default as DiasporaHero} from './diaspora/DiasporaHero';
+export {default as DiasporaSortTabs} from './diaspora/DiasporaSortTabs';
+export {default as DiasporaEmptyState} from './diaspora/DiasporaEmptyState';
+export {default as DiasporaPageContent} from './diaspora/DiasporaPageContent';
