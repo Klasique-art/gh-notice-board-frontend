@@ -6,4 +6,4 @@ const AnnouncementsPage = () => {
   )
 }
 
-export default AnnouncementsPage
+export default AnnouncementsPage 
