@@ -99,3 +99,19 @@ export {default as DiasporaPageContent} from './diaspora/DiasporaPageContent';
 export {default as LoginForm} from './auth/LoginForm';
 export {default as SignupForm} from './auth/SignupForm';
 export {default as ForgotPasswordForm} from './auth/ForgotPasswordForm';
+// dashboard profile
+export {default as ProfileHeader} from './dashboard/profile/ProfileHeader';
+export {default as ProfileAccountDetails} from './dashboard/profile/ProfileAccountDetails';
+export {default as ProfileNotificationSettings} from './dashboard/profile/ProfileNotificationSettings';
+export {default as ProfileQuickActions} from './dashboard/profile/ProfileQuickActions';
+export {default as EditProfileForm} from './dashboard/profile/EditProfileForm';
+// dashboard settings
+export {default as SettingsHeader} from './dashboard/settings/SettingsHeader';
+export {default as SettingsContent} from './dashboard/settings/SettingsContent';
+export {default as SettingsNavigationCards} from './dashboard/settings/SettingsNavigationCards';
+export {default as SecuritySettingsHeader} from './dashboard/settings/SecuritySettingsHeader';
+export {default as SecuritySettingsContent} from './dashboard/settings/SecuritySettingsContent';
+export {default as SecurityInfo} from './dashboard/settings/SecurityInfo';
+export {default as ChangePasswordForm} from './dashboard/settings/ChangePasswordForm';
+export {default as ChangeEmailForm} from './dashboard/settings/ChangeEmailForm';
+export {default as ChangeUsernameForm} from './dashboard/settings/ChangeUsernameForm';
