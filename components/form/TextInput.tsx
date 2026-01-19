@@ -38,10 +38,10 @@ const TextInput = ({
         <div className="w-full">
             <label 
                 htmlFor={inputId} 
-                className='block mb-2 normal-text font-semibold text-white'
+                className='block mb-2 normal-text font-semibold text-slate-900'
             >
                 {label}
-                {required && <span className="text-accent-50 ml-1" aria-label="required">*</span>}
+                {required && <span className="text-accent ml-1" aria-label="required">*</span>}
             </label>
 
             {!multiline ? (
@@ -50,7 +50,7 @@ const TextInput = ({
                         type={type}
                         id={inputId}
                         name={name}
-                        className={`w-full h-12 ${icon ? 'pr-12' : 'pr-4'} pl-4 bg-primary-100 border-2 border-accent text-white placeholder:text-slate-400 normal-text rounded-xl outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300`}
+                        className={`w-full h-12 ${icon ? 'pr-12' : 'pr-4'} pl-4 bg-white border-2 border-slate-200 text-slate-900 placeholder:text-slate-400 normal-text rounded-xl outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300`}
                         placeholder={placeholder}
                         value={value}
                         onChange={onChange}
@@ -61,7 +61,7 @@ const TextInput = ({
                     {icon && (
                         <button
                             type="button"
-                            className='absolute right-0 top-0 h-12 w-12 text-slate-300 hover:text-accent-50 flex items-center justify-center transition-colors duration-300'
+                            className='absolute right-0 top-0 h-12 w-12 text-slate-400 hover:text-primary flex items-center justify-center transition-colors duration-300'
                             aria-label={iconAria || 'Icon button'}
                             onClick={iconClick}
                             tabIndex={0}
@@ -74,7 +74,7 @@ const TextInput = ({
                 <textarea
                     id={inputId}
                     name={name}
-                    className='w-full px-4 py-3 bg-primary-100 border-2 border-accent text-white placeholder:text-slate-400 normal-text rounded-xl resize-none outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300'
+                    className='w-full px-4 py-3 bg-white border-2 border-slate-200 text-slate-900 placeholder:text-slate-400 normal-text rounded-xl resize-none outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300'
                     placeholder={placeholder}
                     rows={rows}
                     value={value}

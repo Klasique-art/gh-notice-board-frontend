@@ -47,6 +47,12 @@ export {default as DashboardNav} from './dashboard/DashboardNav';
 export {default as DashboardSideBar} from './dashboard/DashboardSideBar';
 export {default as DashboardTopBar} from './dashboard/DashboardTopBar';
 export {default as ProfileCard} from './dashboard/ProfileCard';
+export {default as DashboardWelcome} from './dashboard/DashboardWelcome';
+export {default as DashboardStats} from './dashboard/DashboardStats';
+export {default as DashboardQuickActions} from './dashboard/DashboardQuickActions';
+export {default as DashboardRecentContent} from './dashboard/DashboardRecentContent';
+export {default as DashboardApplications} from './dashboard/DashboardApplications';
+export {default as DashboardActivitySummary} from './dashboard/DashboardActivitySummary';
 // events
 export {default as EventCard} from './events/EventCard';
 export {default as EventFilters} from './events/EventFilters';
@@ -89,4 +95,7 @@ export {default as DiasporaHero} from './diaspora/DiasporaHero';
 export {default as DiasporaSortTabs} from './diaspora/DiasporaSortTabs';
 export {default as DiasporaEmptyState} from './diaspora/DiasporaEmptyState';
 export {default as DiasporaPageContent} from './diaspora/DiasporaPageContent';
-
+// auth
+export {default as LoginForm} from './auth/LoginForm';
+export {default as SignupForm} from './auth/SignupForm';
+export {default as ForgotPasswordForm} from './auth/ForgotPasswordForm';

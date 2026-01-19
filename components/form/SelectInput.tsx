@@ -33,10 +33,10 @@ const SelectInput = ({
         <div className="w-full">
             <label 
                 htmlFor={inputId} 
-                className="block mb-2 normal-text font-semibold text-white"
+                className="block mb-2 normal-text font-semibold text-slate-900"
             >
                 {label}
-                {required && <span className="text-accent-50 ml-1" aria-label="required">*</span>}
+                {required && <span className="text-accent ml-1" aria-label="required">*</span>}
             </label>
             <div className="relative">
                 <select
@@ -45,7 +45,7 @@ const SelectInput = ({
                     value={value}
                     onChange={onChange}
                     onBlur={onBlur}
-                    className="w-full h-12 px-4 pr-10 bg-primary-100 border-2 border-accent text-white rounded-xl outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300 appearance-none cursor-pointer"
+                    className="w-full h-12 px-4 pr-10 bg-white border-2 border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 appearance-none cursor-pointer"
                     aria-required={required}
                     aria-invalid={false}
                 >
@@ -53,13 +53,13 @@ const SelectInput = ({
                         {placeholder || `Select ${label}`}
                     </option>
                     {options.map((opt) => (
-                        <option key={opt.value} value={opt.value} className="bg-primary text-white">
+                        <option key={opt.value} value={opt.value} className="bg-white text-slate-900">
                             {opt.label}
                         </option>
                     ))}
                 </select>
                 <ChevronDown 
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-accent-50 pointer-events-none" 
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none" 
                     aria-hidden="true"
                 />
             </div>

@@ -14,22 +14,32 @@
 
 @theme {
   /* Primary - Based on Ghana flag green */
-  --color-primary: #006B3F;        /* Ghana flag green */
-  --color-primary-100: #008C52;    /* Lighter green */
-  --color-primary-200: #00A862;    /* Even lighter green */
+  --color-primary: #006B3F;
+  /* Ghana flag green */
+  --color-primary-100: #008C52;
+  /* Lighter green */
+  --color-primary-200: #00A862;
+  /* Even lighter green */
 
   /* Accent - Based on Ghana flag red/gold */
-  --color-accent: #CE1126;         /* Ghana flag red */
-  --color-accent-50: #E63946;      /* Lighter red */
-  --color-accent-100: #DC2F3C;     /* Mid-tone red */
+  --color-accent: #CE1126;
+  /* Ghana flag red */
+  --color-accent-50: #E63946;
+  /* Lighter red */
+  --color-accent-100: #DC2F3C;
+  /* Mid-tone red */
 
   /* Secondary - Ghana flag gold/yellow */
-  --color-secondary: #FCD116;      /* Ghana flag gold */
-  --color-secondary-50: #FFE066;   /* Lighter gold */
-  --color-secondary-100: #FDD74B;  /* Mid-tone gold */
+  --color-secondary: #FCD116;
+  /* Ghana flag gold */
+  --color-secondary-50: #FFE066;
+  /* Lighter gold */
+  --color-secondary-100: #FDD74B;
+  /* Mid-tone gold */
 
   /* Black Star - Optional, for special elements */
-  --color-star: #000000;           /* Black star from flag */
+  --color-star: #000000;
+  /* Black star from flag */
 
   /* breakpoints */
   --breakpoint-xs: 480px;
@@ -106,8 +116,8 @@
     @apply w-full h-full object-contain object-center;
   }
 
-    .dash-page {
-    @apply min-h-[80vh] rounded-2xl p-2 md:p-4 border-2 border-accent bg-primary-100;
+  .dash-page {
+    @apply min-h-[80vh] rounded-2xl p-3 md:p-6 border-2 border-slate-200 bg-white shadow-xl;
   }
 }
 

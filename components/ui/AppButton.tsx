@@ -44,44 +44,44 @@ const AppButton = ({
     iconPosition = 'left',
     ...props
 }: AppButtonProps) => {
-    // Variant styles
+    // Variant styles - Ghana Notice Board colors
     const variantClasses = {
         primary: `
-            bg-gradient-to-r from-accent-50 to-accent-100
+            bg-gradient-to-r from-primary to-primary-100
             text-white
-            hover:from-accent hover:to-accent-100
-            focus:ring-purple-500
+            hover:from-primary-100 hover:to-primary
+            focus:ring-primary
             shadow-md hover:shadow-lg
             disabled:from-slate-300 disabled:to-slate-400
         `,
         secondary: `
-            bg-slate-100
-            text-slate-900
-            hover:bg-slate-200
-            focus:ring-slate-500
-            border border-slate-300
+            bg-gradient-to-r from-secondary to-secondary/80
+            text-primary
+            hover:from-secondary/90 hover:to-secondary
+            focus:ring-secondary
+            shadow-md hover:shadow-lg
             disabled:bg-slate-50 disabled:text-slate-400
         `,
         outline: `
             bg-transparent
-            text-white
-            border-2 border-accent
-            hover:bg-primary-100
-            focus:ring-accent
+            text-primary
+            border-2 border-primary
+            hover:bg-primary hover:text-white
+            focus:ring-primary
             disabled:border-slate-300 disabled:text-slate-400
         `,
         ghost: `
             bg-transparent
             text-slate-700
-            hover:bg-slate-100
-            focus:ring-slate-500
+            hover:bg-slate-100 hover:text-primary
+            focus:ring-primary
             disabled:text-slate-400
         `,
         danger: `
-            bg-gradient-to-r from-red-600 to-red-700
+            bg-gradient-to-r from-accent to-accent-100
             text-white
-            hover:from-red-700 hover:to-red-800
-            focus:ring-red-500
+            hover:from-accent-100 hover:to-accent
+            focus:ring-accent
             shadow-md hover:shadow-lg
             disabled:from-slate-300 disabled:to-slate-400
         `,

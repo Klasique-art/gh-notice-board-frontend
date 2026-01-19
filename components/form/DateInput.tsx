@@ -19,27 +19,27 @@ const DateInput = ({ name, label, value, onChange, onBlur, required = false, min
         <div className="w-full">
             <label 
                 htmlFor={inputId} 
-                className="block mb-2 normal-text font-semibold text-white"
+                className="block mb-2 normal-text font-semibold text-slate-900"
             >
                 {label}
-                {required && <span className="text-accent-50 ml-1" aria-label="required">*</span>}
+                {required && <span className="text-accent ml-1" aria-label="required">*</span>}
             </label>
             <div className="relative">
                 <input
                     type="date"
                     id={inputId}
                     name={name}
-                    value={value || ''} // ✅ Convert null/undefined to empty string
+                    value={value || ''}
                     onChange={onChange}
                     onBlur={onBlur}
                     min={min}
                     max={max}
-                    className="w-full h-12 pl-12 pr-4 bg-primary-100 border-2 border-accent text-white rounded-xl outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300 scheme-dark"
+                    className="w-full h-12 pl-12 pr-4 bg-white border-2 border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300"
                     aria-required={required}
                     aria-invalid={false}
                 />
                 <CalendarDays
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-accent-50 pointer-events-none"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none"
                     aria-hidden="true"
                 />
             </div>

@@ -9,8 +9,12 @@ import {
     FaTicketAlt,
     FaCogs, 
     FaUser,
-    FaCreditCard,
-    FaClipboardCheck,
+    FaFileAlt,
+    FaPaperPlane,
+    FaBookmark,
+    FaBell,
+    FaChartLine,
+
 } from "react-icons/fa";
 import {
     FaFacebookF,
@@ -116,51 +120,63 @@ export const dashboardSideLinks: DashboardSideLink[] = [
         id: 0,
         title: "Home",
         icon: <FaHome />,
-        link: "/"
-    },
-    {
-        id: 10,
-        title: "Dashboard",
-        icon: <MdDashboard />,
-        link: "/dashboard"
+        link: "/",
     },
     {
         id: 1,
-        title: "Profile",
-        icon: <FaUser />,
-        link: "/dashboard/profile"
+        title: "Dashboard",
+        icon: <MdDashboard />,
+        link: "/dashboard",
     },
     {
         id: 2,
-        title: "Events",
-        icon: <MdCalendarMonth />,
-        link: "/dashboard/events"
+        title: "Profile",
+        icon: <FaUser />,
+        link: "/dashboard/profile",
     },
     {
-        id: 20,
-        title: "Tickets",
-        icon: <FaTicketAlt />,
-        link: "/dashboard/tickets"
+        id: 3,
+        title: "My Content",
+        icon: <FaFileAlt />,
+        link: "/dashboard/my-content",
     },
     {
         id: 4,
-        title: "Payments",
-        icon: <FaCreditCard />,
-        link: "/dashboard/payments"
+        title: "Submissions",
+        icon: <FaPaperPlane />,
+        link: "/dashboard/submissions",
+    },
+    {
+        id: 6,
+        title: "Applications",
+        icon: <FaBriefcase />,
+        link: "/dashboard/applications",
     },
     {
         id: 7,
-        title: "Check in",
-        icon: <FaClipboardCheck />,
-        link: "/dashboard/check-in"
+        title: "Saved Items",
+        icon: <FaBookmark />,
+        link: "/dashboard/saved",
+    },
+    // {
+    //     id: 8,
+    //     title: "Notifications",
+    //     icon: <FaBell />,
+    //     link: "/dashboard/notifications",
+    // },
+    {
+        id: 9,
+        title: "Analytics",
+        icon: <FaChartLine />,
+        link: "/dashboard/analytics",
     },
     {
-        id: 5,
+        id: 10,
         title: "Settings",
         icon: <FaCogs />,
-        link: "/dashboard/settings"
+        link: "/dashboard/settings",
     },
-] 
+];
 
 export const privacyPolicy: PolicySection[] = [
     {
