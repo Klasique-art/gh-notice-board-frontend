@@ -298,3 +298,4 @@ export const mockEvents: Event[] = [
         created_at: "2025-01-11T10:00:00Z",
     },
 ];
+

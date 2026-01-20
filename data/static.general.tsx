@@ -9,10 +9,9 @@ import {
     FaTicketAlt,
     FaCogs, 
     FaUser,
-    FaFileAlt,
     FaPaperPlane,
     FaBookmark,
-    FaBell,
+    FaCalendar,
     FaChartLine,
 
 } from "react-icons/fa";
@@ -136,9 +135,9 @@ export const dashboardSideLinks: DashboardSideLink[] = [
     },
     {
         id: 3,
-        title: "My Content",
-        icon: <FaFileAlt />,
-        link: "/dashboard/my-content",
+        title: "My Events",
+        icon: <FaCalendar />,
+        link: "/dashboard/my-events",
     },
     {
         id: 4,
