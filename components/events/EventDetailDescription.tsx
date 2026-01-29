@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Event } from "@/types/events.types";
+import { Event, EventDetail } from "@/types/events.types";
 
 interface EventDetailDescriptionProps {
-    event: Event;
+    event: EventDetail;
 }
 
 const EventDetailDescription = ({ event }: EventDetailDescriptionProps) => {
@@ -39,17 +39,19 @@ const EventDetailDescription = ({ event }: EventDetailDescriptionProps) => {
                 </div>
 
                 {/* Category Badge */}
-                <div className="pt-6 border-t border-slate-200">
-                    <div className="flex items-center gap-2">
-                        <span className="small-text text-slate-600">Category:</span>
-                        <span
-                            className="px-3 py-1 rounded-lg text-white small-text font-semibold"
-                            style={{ backgroundColor: event.category.color }}
-                        >
-                            {event.category.name}
-                        </span>
+                {event.category && (
+                    <div className="pt-6 border-t border-slate-200">
+                        <div className="flex items-center gap-2">
+                            <span className="small-text text-slate-600">Category:</span>
+                            <span
+                                className="px-3 py-1 rounded-lg text-white small-text font-semibold"
+                                style={{ backgroundColor: event.category.color }}
+                            >
+                                {event.category.name}
+                            </span>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </motion.article>
     );

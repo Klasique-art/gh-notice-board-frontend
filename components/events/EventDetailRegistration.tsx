@@ -15,7 +15,7 @@ const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [likesCount, setLikesCount] = useState(event.likes_count);
 
-    const isFree = event.price === 0;
+    const isFree = parseFloat(event.price) === 0;
     const spotsLeft = event.max_attendees
         ? event.max_attendees - event.registered_count
         : null;
@@ -91,7 +91,7 @@ const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
                                 ) : (
                                     <>
                                         <UserPlus className="w-5 h-5" />
-                                        {isFree ? "Register Free" : `Register - ${event.currency} ${event.price.toFixed(2)}`}
+                                        {isFree ? "Register Free" : `Register - ${event.currency} ${parseFloat(event.price).toFixed(2)}`}
                                     </>
                                 )}
                             </button>

@@ -1,22 +1,21 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { EventFilters, EventSortTabs, EventGrid } from "@/components";
-import { Event } from "@/types/events.types";
+import { Event, EventCategory, PaginatedEventsResponse } from "@/types/events.types";
 import { useEventFilters } from "@/hooks/useEventFilters";
-
-// Items per page for pagination
-const ITEMS_PER_PAGE = 12;
 
 interface EventPageContentProps {
     initialEvents: Event[];
-    availableCategories: { slug: string; name: string; color: string }[];
+    availableCategories: EventCategory[];
+    totalCount: number;
 }
 
 const EventPageContent = ({
     initialEvents,
     availableCategories,
+    totalCount,
 }: EventPageContentProps) => {
     const {
         filters,
@@ -27,138 +26,86 @@ const EventPageContent = ({
         hasActiveFilters,
     } = useEventFilters();
 
-    const [displayedEvents, setDisplayedEvents] = useState<Event[]>([]);
+    const [displayedEvents, setDisplayedEvents] = useState<Event[]>(initialEvents);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(totalCount > initialEvents.length);
+    const [total, setTotal] = useState(totalCount);
 
-    // Filter and sort events
-    const filteredAndSortedEvents = useMemo(() => {
-        let result = [...initialEvents];
+    // Fetch events from API when filters or sort change
+    useEffect(() => {
+        const fetchEvents = async () => {
+            setIsLoading(true);
+            try {
+                // Build query params
+                const params = new URLSearchParams();
 
-        // Apply search filter
-        if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
-            result = result.filter(
-                (event) =>
-                    event.title.toLowerCase().includes(searchLower) ||
-                    event.summary.toLowerCase().includes(searchLower) ||
-                    event.organizer.full_name.toLowerCase().includes(searchLower) ||
-                    event.venue_name.toLowerCase().includes(searchLower)
-            );
-        }
+                if (filters.search) params.set('search', filters.search);
+                if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
+                if (filters.event_type.length > 0) params.set('event_type', filters.event_type[0]);
+                if (filters.is_featured) params.set('is_featured', 'true');
+                if (filters.date_from) params.set('start_date_from', filters.date_from);
+                if (filters.date_to) params.set('start_date_to', filters.date_to);
+                params.set('ordering', sort);
+                params.set('page', '1');
 
-        // Apply category filter
-        if (filters.category.length > 0) {
-            result = result.filter((event) =>
-                filters.category.includes(event.category.slug)
-            );
-        }
+                const response = await fetch(`/api/events?${params.toString()}`);
 
-        // Apply event type filter
-        if (filters.event_type.length > 0) {
-            result = result.filter((event) =>
-                filters.event_type.includes(event.event_type)
-            );
-        }
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events');
+                }
 
-        // Apply virtual filter
-        if (filters.is_virtual) {
-            result = result.filter(
-                (event) => event.event_type === "virtual" || event.event_type === "hybrid"
-            );
-        }
+                const data: PaginatedEventsResponse = await response.json();
 
-        // Apply free filter
-        if (filters.is_free) {
-            result = result.filter((event) => event.price === 0);
-        }
-
-        // Apply featured filter
-        if (filters.is_featured) {
-            result = result.filter((event) => event.is_featured);
-        }
-
-        // Apply city filter
-        if (filters.city) {
-            const cityLower = filters.city.toLowerCase();
-            result = result.filter((event) =>
-                event.venue_address.toLowerCase().includes(cityLower)
-            );
-        }
-
-        // Apply date filters
-        if (filters.date_from) {
-            const fromDate = new Date(filters.date_from);
-            result = result.filter(
-                (event) => new Date(event.start_date) >= fromDate
-            );
-        }
-
-        if (filters.date_to) {
-            const toDate = new Date(filters.date_to);
-            toDate.setHours(23, 59, 59, 999); // End of day
-            result = result.filter((event) => new Date(event.end_date) <= toDate);
-        }
-
-        // Apply sorting
-        result.sort((a, b) => {
-            switch (sort) {
-                case "start_date":
-                    return (
-                        new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
-                    );
-                case "-start_date":
-                    return (
-                        new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
-                    );
-                case "-created_at":
-                    return (
-                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                    );
-                case "-views_count":
-                    return b.views_count - a.views_count;
-                case "-likes_count":
-                    return b.likes_count - a.likes_count;
-                case "-registration_count":
-                    return b.registered_count - a.registered_count;
-                case "price":
-                    return a.price - b.price;
-                case "-price":
-                    return b.price - a.price;
-                default:
-                    return 0;
+                setDisplayedEvents(data.results);
+                setTotal(data.count);
+                setHasMore(!!data.next);
+                setCurrentPage(1);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            } finally {
+                setIsLoading(false);
             }
-        });
+        };
 
-        return result;
-    }, [initialEvents, filters, sort]);
-
-    // Paginated events
-    const paginatedEvents = useMemo(() => {
-        return filteredAndSortedEvents.slice(0, currentPage * ITEMS_PER_PAGE);
-    }, [filteredAndSortedEvents, currentPage]);
-
-    const hasMore = paginatedEvents.length < filteredAndSortedEvents.length;
-
-    // Update displayed events when paginated events change
-    useEffect(() => {
-        setDisplayedEvents(paginatedEvents);
-    }, [paginatedEvents]);
-
-    // Reset page when filters change
-    useEffect(() => {
-        setCurrentPage(1);
+        fetchEvents();
     }, [filters, sort]);
 
-    // Load more events (infinite scroll)
-    const handleLoadMore = () => {
-        if (!isLoading && hasMore) {
-            setIsLoading(true);
-            // Simulate loading delay
-            setTimeout(() => {
-                setCurrentPage((prev) => prev + 1);
-                setIsLoading(false);
-            }, 500);
+    // Load more events (pagination)
+    const handleLoadMore = async () => {
+        if (isLoading || !hasMore) return;
+
+        setIsLoading(true);
+        try {
+            const nextPage = currentPage + 1;
+
+            // Build query params
+            const params = new URLSearchParams();
+
+            if (filters.search) params.set('search', filters.search);
+            if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
+            if (filters.event_type.length > 0) params.set('event_type', filters.event_type[0]);
+            if (filters.is_featured) params.set('is_featured', 'true');
+            if (filters.date_from) params.set('start_date_from', filters.date_from);
+            if (filters.date_to) params.set('start_date_to', filters.date_to);
+            params.set('ordering', sort);
+            params.set('page', nextPage.toString());
+
+            const response = await fetch(`/api/events?${params.toString()}`);
+
+            if (!response.ok) {
+                throw new Error('Failed to load more events');
+            }
+
+            const data: PaginatedEventsResponse = await response.json();
+
+            setDisplayedEvents(prev => [...prev, ...data.results]);
+            setHasMore(!!data.next);
+            setCurrentPage(nextPage);
+        } catch (error) {
+            console.error('Error loading more events:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -189,9 +136,9 @@ const EventPageContent = ({
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                         <p className="normal-text text-slate-600">
                             <span className="font-bold text-slate-900">
-                                {filteredAndSortedEvents.length}
+                                {total}
                             </span>{" "}
-                            {filteredAndSortedEvents.length === 1 ? "event" : "events"} found
+                            {total === 1 ? "event" : "events"} found
                         </p>
                     </div>
 

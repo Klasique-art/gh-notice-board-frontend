@@ -27,7 +27,8 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
         },
     };
 
-    const formatDate = (dateString: string) => {
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return "No date";
         const date = new Date(dateString);
         return new Intl.DateTimeFormat("en-GB", {
             day: "numeric",
@@ -52,6 +53,11 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
         >
             {/* Badges */}
             <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
+                {article.is_breaking && (
+                    <span className="px-3 py-1 rounded-full bg-accent text-white small-text font-bold flex items-center gap-1 shadow-lg">
+                        BREAKING
+                    </span>
+                )}
                 {article.is_trending && (
                     <span className="px-3 py-1 rounded-full bg-secondary text-primary small-text font-bold flex items-center gap-1 shadow-lg">
                         <TrendingUp className="w-3 h-3" />
@@ -63,7 +69,7 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
             {/* Featured Image */}
             <Link href={`/news/${article.slug}`} className="block relative aspect-16/10 overflow-hidden bg-slate-100">
                 <Image
-                    src={article.featured_image ?? placeholderImage}
+                    src={article.featured_image || placeholderImage}
                     alt={article.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -76,16 +82,24 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
             <div className="p-5 space-y-4">
                 {/* Category & Date */}
                 <div className="flex items-center justify-between gap-2">
-                    <Link
-                        href={`/news?category=${article.category.slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white small-text-2 font-semibold transition-colors"
-                        style={{ backgroundColor: article.category.color }}
-                    >
-                        {article.category.name}
-                    </Link>
+                    {article.category ? (
+                        <Link
+                            href={`/news?category=${article.category.slug}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white small-text-2 font-semibold transition-colors"
+                            style={{ backgroundColor: article.category.color }}
+                        >
+                            {article.category.name}
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500 text-white small-text-2 font-semibold">
+                            Uncategorized
+                        </span>
+                    )}
                     <div className="flex items-center gap-1 text-slate-500 small-text-2">
                         <Calendar className="w-3.5 h-3.5" />
-                        <time dateTime={article.published_at ?? undefined}>{formatDate(article.published_at!)}</time>
+                        <time dateTime={article.published_at || undefined}>
+                            {formatDate(article.published_at)}
+                        </time>
                     </div>
                 </div>
 
@@ -127,13 +141,13 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
                             {article.author.avatar ? (
                                 <Image
                                     src={article.author.avatar}
-                                    alt={article.author.full_name}
+                                    alt={article.author.display_name}
                                     fill
                                     className="object-cover"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-primary text-white small-text font-bold">
-                                    {article.author.first_name[0]}{article.author.last_name[0]}
+                                    {article.author.display_name.charAt(0).toUpperCase()}
                                 </div>
                             )}
                         </div>
@@ -167,6 +181,7 @@ const NewsCard = ({ article, index = 0 }: NewsCardProps) => {
                 <button
                     className="w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-600 hover:text-white hover:bg-primary transition-colors"
                     title="Bookmark"
+                    aria-label="Bookmark article"
                 >
                     <Bookmark className="w-4 h-4" />
                 </button>

@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import {
     DashboardWelcome,
     DashboardStats,
@@ -6,20 +8,29 @@ import {
     DashboardApplications,
     DashboardActivitySummary,
 } from "@/components";
+import { getCurrentUser } from "@/app/lib/auth";
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
+    const [user] = await Promise.all([
+        getCurrentUser()
+    ])
+
+    if (!user) {
+        redirect("/login");
+    }
+
     return (
         <main className="dash-page">
-            <DashboardWelcome />
+            <DashboardWelcome user={user} />
             <DashboardStats />
             <DashboardQuickActions />
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <DashboardRecentContent />
                 <DashboardApplications />
-            </div>
+            </div> */}
             
-            <DashboardActivitySummary />
+            {/* <DashboardActivitySummary /> */}
         </main>
     );
 };

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import {
     AppForm,
@@ -13,7 +13,6 @@ import {
     FormLoader,
 } from "@/components";
 import { SignupValidationSchema, SignupFormValues } from "@/data/validationConstants";
-import { currentUser } from "@/data/dummy.general";
 
 const SignupForm = () => {
     const router = useRouter();
@@ -26,43 +25,61 @@ const SignupForm = () => {
         setLoading(true);
         setError("");
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        try {
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    username: values.username,
+                    email: values.email,
+                    password: values.password,
+                    password2: values.confirmPassword,
+                    first_name: values.username.split("_")[0] || "",
+                    last_name: values.username.split("_")[1] || "",
+                }),
+            });
 
-        // Simulate validation - check if username/email already exists
-        if (values.username === currentUser.username) {
-            setError("Username already taken. Please choose another one.");
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (data.username) {
+                    setError(Array.isArray(data.username) ? data.username[0] : data.username);
+                } else if (data.email) {
+                    setError(Array.isArray(data.email) ? data.email[0] : data.email);
+                } else if (data.password) {
+                    setError(Array.isArray(data.password) ? data.password[0] : data.password);
+                } else if (data.error) {
+                    setError(data.error);
+                } else if (data.detail) {
+                    setError(data.detail);
+                } else {
+                    setError("Signup failed. Please try again.");
+                }
+                return;
+            }
+
+            if (data.message?.includes("logged in")) {
+                router.push("/dashboard");
+            } else {
+                router.push("/login?registered=true");
+            }
+
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
+        } finally {
             setLoading(false);
-            return;
         }
-
-        if (values.email === currentUser.email) {
-            setError("Email already registered. Please use another email or login.");
-            setLoading(false);
-            return;
-        }
-
-        // Success - Auto-login and redirect to dashboard
-        console.log("Signup successful! Auto-logging in...", {
-            username: values.username,
-            email: values.email,
-        });
-
-        // In production, backend would:
-        // 1. Create user account
-        // 2. Set HttpOnly cookies (auto-login)
-        // 3. Return user data
-
-        // Simulate auto-login by redirecting to dashboard
-        router.push("/dashboard");
     };
 
     return (
         <div className="w-full max-w-2xl mx-auto">
             {/* Header Section */}
             <div className="mb-4">
-
-                {/* Welcome Message */}
                 <div className="space-y-1">
                     <h2 className="big-text-2 font-bold text-slate-900 leading-tight">
                         Create Account
@@ -76,22 +93,6 @@ const SignupForm = () => {
 
             {/* Form Card */}
             <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl border-2 border-slate-200">
-                {/* Test Info */}
-                <div className="mb-4 p-3 bg-secondary/10 rounded-xl border border-secondary/30">
-                    <p className="small-text text-slate-700 font-semibold mb-1">
-                        🧪 For Testing:
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        Use any credentials <strong>except</strong>:
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        Username: <strong>{currentUser.username}</strong> (already taken)
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        Email: <strong>{currentUser.email}</strong> (already registered)
-                    </p>
-                </div>
-
                 <AppErrorMessage visible={!!error} error={error} />
 
                 <AppForm

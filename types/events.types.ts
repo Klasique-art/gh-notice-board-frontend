@@ -1,138 +1,233 @@
+// types/events.types.ts
+
 /* ===========================
-   Event Type Discriminators
+   User / Organizer Types
 =========================== */
 
-export type EventType = "in-person" | "virtual" | "hybrid";
+export type UserType = "regular" | "journalist" | "organization" | "government" | "verified";
+
+export type Organizer = {
+    id: number;
+    username: string;
+    full_name: string;
+    display_name: string;
+    avatar: string | null;
+    is_verified: boolean;
+    verification_badge: string;
+};
 
 /* ===========================
-   Category
+   Event Category
 =========================== */
 
 export type EventCategory = {
     id: number;
     name: string;
     slug: string;
-    description?: string;
-    icon: string; // lucide-react icon name
-    color: string; // hex color
-};
-
-/* ===========================
-   Organizer
-=========================== */
-
-export type OrganizerProfile = {
-    occupation?: string;
-    company?: string;
-    skills: string[];
-    interests: string[];
-    show_email: boolean;
-    show_location: boolean;
-    allow_messages: boolean;
-    theme: "light" | "dark" | "auto";
-    language: string;
+    description: string;
+    icon: string;
+    color: string;
+    is_active: boolean;
+    order: number;
+    events_count?: number;
     created_at: string;
     updated_at: string;
 };
 
-export type Organizer = {
+/* ===========================
+   Tag
+=========================== */
+
+export type EventTag = {
     id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-    display_name: string;
-    bio?: string;
-    location?: string;
-    website?: string;
-    twitter_username?: string;
-    linkedin_url?: string;
-    github_username?: string;
-    avatar?: string | null;
-    cover_image?: string | null;
-
-    is_public: boolean;
-    email_notifications: boolean;
-    push_notifications: boolean;
-
-    followers_count: number;
-    following_count: number;
-    posts_count: number;
-
-    is_verified: boolean;
-    verification_badge?: string;
-    user_type: "individual" | "organization";
-
+    name: string;
+    slug: string;
+    description: string;
+    category: number;
+    category_name: string;
+    usage_count: number;
+    is_active: boolean;
     created_at: string;
-    updated_at: string;
-    last_seen?: string;
-
-    profile: OrganizerProfile;
+    is_subscribed: boolean;
 };
 
 /* ===========================
-   Base Event
+   Event Type & Status
 =========================== */
 
-type BaseEvent = {
+export type EventType = "in-person" | "virtual" | "hybrid";
+
+export type EventStatus =
+    | "draft"
+    | "pending_review"
+    | "published"
+    | "cancelled"
+    | "postponed"
+    | "completed";
+
+/* ===========================
+   Event (List View)
+=========================== */
+
+export type Event = {
     id: string;
     title: string;
     slug: string;
     summary: string;
-    description: string;
-
+    featured_image: string | null;
+    
+    category: EventCategory | null;
+    tags: EventTag[];
+    organizer: Organizer;
+    
+    venue_name: string;
+    venue_address: string;
+    
+    event_type: EventType;
     start_date: string;
     end_date: string;
-
-    featured_image?: string | null;
-
-    organizer: Organizer;
-    category: EventCategory;
-
-    registration_required: boolean;
-    max_attendees?: number;
-    registered_count: number;
-
-    price: number;
-    currency: "GHS" | "USD" | "EUR";
-
-    status: "draft" | "published" | "archived";
+    timezone: string;
+    
     is_featured: boolean;
-
+    is_trending: boolean;
+    status: EventStatus;
+    
+    registration_required: boolean;
+    max_attendees: number;
+    registered_count: number;
+    
     views_count: number;
     likes_count: number;
+    shares_count: number;
+    
+    user_registered: boolean;
+    user_liked: boolean;
+    user_bookmarked: boolean;
+    
+    is_upcoming: boolean;
+    is_ongoing: boolean;
+    is_past: boolean;
+    days_until: number | null;
+    
+    price: string; // Decimal as string
+    currency: string;
+    early_bird_price: string | null;
+    early_bird_deadline: string | null;
+    
+    created_at: string;
+    updated_at: string;
+};
 
+/* ===========================
+   Event Detail
+=========================== */
+
+export type EventSpeaker = {
+    id: number;
+    name: string;
+    title: string;
+    bio: string;
+    photo: string | null;
+    linkedin_url: string;
+    twitter_username: string;
+    website: string;
+    order: number;
+};
+
+export type EventSponsor = {
+    id: number;
+    name: string;
+    logo: string;
+    website: string;
+    description: string;
+    sponsorship_level: "title" | "platinum" | "gold" | "silver" | "bronze" | "partner";
+    order: number;
+};
+
+export type EventImage = {
+    id: number;
+    image: string;
+    caption: string;
+    is_cover: boolean;
+    order: number;
     created_at: string;
 };
 
+export type EventRegistration = {
+    id: number;
+    user: Organizer;
+    registration_type: string;
+    ticket_number: string;
+    attendance_status: string;
+    checked_in_at: string | null;
+    special_requirements: string;
+    is_speaker: boolean;
+    is_vip: boolean;
+    created_at: string;
+};
+
+export type EventDetail = Event & {
+    description: string;
+    agenda: string;
+    venue_details: string;
+    venue_map_url: string;
+    virtual_meeting_url: string;
+    virtual_meeting_password: string;
+    
+    registration_instructions: string;
+    cancellation_policy: string;
+    covid_safety_measures: string;
+    parking_info: string;
+    accessibility_info: string;
+    
+    contact_email: string;
+    contact_phone: string;
+    website_url: string;
+    facebook_event_url: string;
+    livestream_url: string;
+    
+    speakers: EventSpeaker[];
+    sponsors: EventSponsor[];
+    gallery_images: EventImage[];
+    registration_list: EventRegistration[];
+    related_events: Event[];
+    
+    is_cancelled: boolean;
+    cancellation_reason: string;
+    allow_waitlist: boolean;
+    waitlist_count: number;
+    check_in_code: string;
+    certificate_template: string;
+};
+
 /* ===========================
-   Event Variants (Discriminated Union)
+   Paginated Response
 =========================== */
 
-export type InPersonEvent = BaseEvent & {
-    event_type: "in-person";
-    venue_name: string;
-    venue_address: string;
-    virtual_meeting_url?: "";
-};
-
-export type VirtualEvent = BaseEvent & {
-    event_type: "virtual";
-    venue_name: "Online" | "Online via Zoom" | "Virtual Event";
-    venue_address: "Virtual Event";
-    virtual_meeting_url: string;
-};
-
-export type HybridEvent = BaseEvent & {
-    event_type: "hybrid";
-    venue_name: string;
-    venue_address: string;
-    virtual_meeting_url: string;
+export type PaginatedEventsResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: Event[];
 };
 
 /* ===========================
-   Final Event Type
+   Event Filters
 =========================== */
 
-export type Event = InPersonEvent | VirtualEvent | HybridEvent;
+export type EventFilters = {
+    search?: string;
+    category?: string; // UUID
+    category_slug?: string;
+    tag?: string; // slug
+    organizer?: string; // UUID
+    status?: EventStatus | 'all';
+    event_type?: EventType;
+    is_featured?: boolean;
+    is_trending?: boolean;
+    is_upcoming?: boolean;
+    start_date_from?: string; // YYYY-MM-DD
+    start_date_to?: string; // YYYY-MM-DD
+    ordering?: string; // e.g., 'start_date', '-start_date'
+    page?: number;
+};

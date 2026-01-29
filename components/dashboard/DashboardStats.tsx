@@ -4,7 +4,7 @@ import { FileText, Clock, Briefcase, Bookmark, Eye, TrendingUp } from "lucide-re
 
 const dashboardStats = {
     published_content: 12,
-    pending_submissions: 3,
+    pending_submissions: 3, 
     active_applications: 5,
     saved_items: 24,
     total_views: 15420,

@@ -155,7 +155,7 @@ export const dashboardSideLinks: DashboardSideLink[] = [
         id: 7,
         title: "Saved Items",
         icon: <FaBookmark />,
-        link: "/dashboard/saved",
+        link: "/dashboard/saved-items",
     },
     // {
     //     id: 8,

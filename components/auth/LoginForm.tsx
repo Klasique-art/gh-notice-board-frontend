@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Star, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import {
     AppForm,
@@ -13,7 +13,6 @@ import {
     FormLoader,
 } from "@/components";
 import { LoginValidationSchema, LoginFormValues } from "@/data/validationConstants";
-import { currentUser } from "@/data/dummy.general";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -21,28 +20,40 @@ const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = async (values: LoginFormValues) => {
+    const handleLogin = async (values: LoginFormValues) => { 
         setLoading(true);
         setLoginError("");
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: values.emailOrUsername,
+                    password: values.password,
+                }),
+            });
 
-        // Simulate login validation against mock user
-        const isEmailMatch = values.emailOrUsername === currentUser.email;
-        const isUsernameMatch = values.emailOrUsername === currentUser.username;
-        const isPasswordCorrect = values.password === "Password123"; // Mock password
+            const data = await response.json();
 
-        if ((isEmailMatch || isUsernameMatch) && isPasswordCorrect) {
-            // Success - Simulate storing auth token
-            console.log("Login successful!", currentUser);
+            if (!response.ok) {
+                // Handle error from backend
+                setLoginError(data.error || data.message || "Invalid email/username or password. Please try again.");
+                setLoading(false);
+                return;
+            }
+
+            // Success - tokens are stored in HttpOnly cookies by the API route
+            console.log("Login successful!", data.user);
             
-            // In production, backend would set HttpOnly cookies here
-            // For now, just redirect to dashboard
-            router.push("/dashboard");
-        } else {
-            // Failed
-            setLoginError("Invalid email/username or password. Please try again.");
+            // Redirect to dashboard/home
+            router.push("/");
+            
+        } catch (error) {
+            console.error("Login error:", error);
+            setLoginError("An error occurred during login. Please try again.");
             setLoading(false);
         }
     };
@@ -51,7 +62,6 @@ const LoginForm = () => {
         <div className="w-full max-w-md mx-auto mb-20">
             {/* Header */}
             <div className="mt-24">
-
                 {/* Welcome Message */}
                 <div className="space-y-1">
                     <h2 className="massive-text font-bold text-slate-900 leading-tight">
@@ -66,22 +76,6 @@ const LoginForm = () => {
 
             {/* Form Card */}
             <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl border-2 border-slate-200">
-                {/* Test Credentials Info */}
-                <div className="mb-4 p-3 bg-secondary/10 rounded-xl border border-secondary/30">
-                    <p className="small-text text-slate-700 font-semibold mb-1">
-                        🧪 Test Credentials:
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        <strong>Email:</strong> {currentUser.email}
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        <strong>Username:</strong> {currentUser.username}
-                    </p>
-                    <p className="small-text-2 text-slate-600">
-                        <strong>Password:</strong> Password123
-                    </p>
-                </div>
-
                 <AppErrorMessage visible={!!loginError} error={loginError} />
 
                 <AppForm

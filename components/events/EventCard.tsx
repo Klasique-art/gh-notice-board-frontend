@@ -14,6 +14,7 @@ import {
     Star,
 } from "lucide-react";
 import { Event } from "@/types/events.types";
+import { placeholderImage } from "@/data/constants";
 
 interface EventCardProps {
     event: Event;
@@ -85,7 +86,10 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
         }
     };
 
-    const isFree = event.price === 0;
+    // Parse price from string to number
+    const priceValue = parseFloat(event.price);
+    const isFree = priceValue === 0;
+    
     const spotsLeft = event.max_attendees
         ? event.max_attendees - event.registered_count
         : null;
@@ -101,8 +105,8 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
             {/* Badges */}
             <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
                 {event.is_featured && (
-                    <span className="px-3 py-1 rounded-full bg-primary text-white small-text font-bold shadow-lg">
-                        <Star className="w-3 h-3 inline mr-1" />
+                    <span className="px-3 py-1 rounded-full bg-primary text-white small-text font-bold shadow-lg flex items-center gap-1">
+                        <Star className="w-3 h-3" />
                         FEATURED
                     </span>
                 )}
@@ -119,7 +123,7 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
                 className="block relative aspect-16/10 overflow-hidden bg-slate-100"
             >
                 <Image
-                    src={event.featured_image ?? "/placeholder-event.jpg"}
+                    src={event.featured_image || placeholderImage}
                     alt={event.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -146,13 +150,19 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
             <div className="p-2 md:p-4 space-y-4">
                 {/* Category & Event Type */}
                 <div className="flex items-center justify-between gap-2">
-                    <Link
-                        href={`/events?category=${event.category.slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white small-text-2 font-semibold transition-colors"
-                        style={{ backgroundColor: event.category.color }}
-                    >
-                        {event.category.name}
-                    </Link>
+                    {event.category ? (
+                        <Link
+                            href={`/events?category=${event.category.slug}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white small-text-2 font-semibold transition-colors"
+                            style={{ backgroundColor: event.category.color }}
+                        >
+                            {event.category.name}
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500 text-white small-text-2 font-semibold">
+                            Uncategorized
+                        </span>
+                    )}
                     <div
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 small-text-2 font-medium"
                         title={getEventTypeLabel()}
@@ -231,11 +241,9 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
                         {isFree ? (
                             <span className="big-text-5 font-bold text-secondary">FREE</span>
                         ) : (
-                            <>
-                                <span className="big-text-5 font-bold text-slate-900">
-                                    {event.currency} {event.price.toFixed(2)}
-                                </span>
-                            </>
+                            <span className="big-text-5 font-bold text-slate-900">
+                                {event.currency} {priceValue.toFixed(2)}
+                            </span>
                         )}
                     </div>
 
@@ -258,14 +266,13 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
                         {event.organizer.avatar ? (
                             <Image
                                 src={event.organizer.avatar}
-                                alt={event.organizer.full_name}
+                                alt={event.organizer.display_name}
                                 fill
                                 className="object-cover"
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-primary text-white small-text font-bold">
-                                {event.organizer.first_name[0]}
-                                {event.organizer.last_name[0]}
+                                {event.organizer.display_name.charAt(0).toUpperCase()}
                             </div>
                         )}
                     </div>
@@ -286,6 +293,7 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
                 <button
                     className="w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors"
                     title="Bookmark"
+                    aria-label="Bookmark event"
                 >
                     <Bookmark className="w-4 h-4" />
                 </button>

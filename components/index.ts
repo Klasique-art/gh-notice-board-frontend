@@ -144,3 +144,18 @@ export {default as ContentPerformanceChart} from './dashboard/analytics/ContentP
 export {default as TopContentList} from './dashboard/analytics/TopContentList';
 export {default as ApplicationStatsCard} from './dashboard/analytics/ApplicationStatsCard';
 export {default as RecentActivityFeed} from './dashboard/analytics/RecentActivityFeed';
+// dashboard events
+export {default as MyEventCard} from './dashboard/events/MyEventCard';
+export {default as MyEventsHeader} from './dashboard/events/MyEventsHeader';
+export {default as MyEventsStats} from './dashboard/events/MyEventsStats';
+export {default as MyEventsFilters} from './dashboard/events/MyEventsFilters';
+export {default as MyEventsGrid} from './dashboard/events/MyEventsGrid';
+export {default as MyEventsEmptyState} from './dashboard/events/MyEventsEmptyState';
+export {default as MyEventsContent} from './dashboard/events/MyEventsContent';
+// dashboard saved items
+export {default as SavedItemCard} from './dashboard/saved-items/SavedItemCard';
+export {default as SavedItemsHeader} from './dashboard/saved-items/SavedItemsHeader';
+export {default as SavedItemsFilters} from './dashboard/saved-items/SavedItemsFilters';
+export {default as SavedItemsGrid} from './dashboard/saved-items/SavedItemsGrid';
+export {default as SavedItemsEmptyState} from './dashboard/saved-items/SavedItemsEmptyState';
+export {default as SavedItemsContent} from './dashboard/saved-items/SavedItemsContent';

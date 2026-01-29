@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import { MapPin, Navigation, ExternalLink, Video } from "lucide-react";
-import { Event } from "@/types/events.types";
+import { EventDetail } from "@/types/events.types";
 
 interface EventDetailVenueProps {
-    event: Event;
+    event: EventDetail;
 }
 
 const EventDetailVenue = ({ event }: EventDetailVenueProps) => {

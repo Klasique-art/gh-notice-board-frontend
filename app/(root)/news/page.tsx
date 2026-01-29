@@ -1,7 +1,9 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 import { NewsHero, NewsPageContent } from "@/components";
-import { mockNews } from "@/data/mockNews";
+import { getNews } from "@/app/lib/news";
+import { NewsCategory, NewsTag } from "@/types/news.types";
 
 // SEO Metadata
 export const metadata: Metadata = {
@@ -31,37 +33,69 @@ export const metadata: Metadata = {
     },
 };
 
-// Server Component - Fetches data and prepares props
+// Server Component - Fetches real data from backend
 const NewsPage = async () => {
-    // In production, this would be an API call:
-    // const articles = await getNews();
-    const articles = mockNews;
+    try {
+        // Fetch initial news articles from backend
+        const newsData = await getNews({
+            ordering: '-published_at',
+            page: 1,
+        });
 
-    // Extract unique categories
-    const categories = articles.map((article) => article.category);
-    const uniqueCategories = Array.from(
-        new Map(categories.map((cat) => [cat.slug, cat])).values()
-    );
+        const articles = newsData.results;
 
-    // Extract unique tags
-    const allTags = articles.flatMap((article) => article.tags || []);
-    const uniqueTags = Array.from(
-        new Map(allTags.map((tag) => [tag.slug, tag])).values()
-    );
+        // Extract unique categories
+        const categories = articles
+            .filter(article => article.category !== null)
+            .map(article => article.category!);
+        
+        const uniqueCategories: NewsCategory[] = Array.from(
+            new Map(categories.map(cat => [cat.slug, cat])).values()
+        );
 
-    return (
-        <main className="min-h-screen bg-slate-50">
-            {/* Hero Section - Server Component */}
-            <NewsHero />
+        // Extract unique tags
+        const allTags = articles.flatMap(article => article.tags || []);
+        const uniqueTags: NewsTag[] = Array.from(
+            new Map(allTags.map(tag => [tag.slug, tag])).values()
+        );
 
-            {/* Interactive Content - Client Component */}
-            <NewsPageContent
-                initialArticles={articles}
-                availableCategories={uniqueCategories}
-                availableTags={uniqueTags}
-            />
-        </main>
-    );
+        return (
+            <main className="min-h-screen bg-slate-50">
+                {/* Hero Section - Server Component */}
+                <NewsHero />
+
+                {/* Interactive Content - Client Component */}
+                <NewsPageContent
+                    initialArticles={articles}
+                    availableCategories={uniqueCategories}
+                    availableTags={uniqueTags}
+                    totalCount={newsData.count}
+                />
+            </main>
+        );
+    } catch (error) {
+        console.error('Error loading news page:', error);
+        
+        // Fallback UI for errors
+        return (
+            <main className="min-h-screen bg-slate-50">
+                <div className="inner-wrapper py-20 text-center">
+                    <h1 className="big-text-1 font-bold text-slate-900 mb-4">
+                        Unable to Load News
+                    </h1>
+                    <p className="normal-text text-slate-600 mb-8">
+                        We're having trouble loading news articles. Please try again later.
+                    </p>
+                    
+                    <Link href="/"
+                        className="inline-block px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-100 transition-colors"
+                    >
+                        Return Home
+                    </Link>
+                </div>
+            </main>
+        );
+    }
 };
 
 export default NewsPage;

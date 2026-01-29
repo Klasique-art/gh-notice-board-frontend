@@ -39,7 +39,10 @@ const EventDetailMeta = ({ event }: EventDetailMetaProps) => {
         return num.toString();
     };
 
-    const isFree = event.price === 0;
+    // Parse price from string
+    const priceValue = parseFloat(event.price);
+    const isFree = priceValue === 0;
+    
     const spotsLeft = event.max_attendees
         ? event.max_attendees - event.registered_count
         : null;
@@ -63,14 +66,13 @@ const EventDetailMeta = ({ event }: EventDetailMetaProps) => {
                         {event.organizer.avatar ? (
                             <Image
                                 src={event.organizer.avatar}
-                                alt={event.organizer.full_name}
+                                alt={event.organizer.display_name}
                                 fill
                                 className="object-cover"
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-primary text-white normal-text font-bold">
-                                {event.organizer.first_name[0]}
-                                {event.organizer.last_name[0]}
+                                {event.organizer.display_name.charAt(0).toUpperCase()}
                             </div>
                         )}
                     </Link>
@@ -87,14 +89,12 @@ const EventDetailMeta = ({ event }: EventDetailMetaProps) => {
                                 </h3>
                                 {event.organizer.is_verified && (
                                     <span className="text-secondary" title="Verified">
-                                        {event.organizer.verification_badge}
+                                        ✓
                                     </span>
                                 )}
                             </div>
                             <p className="small-text text-slate-600">
-                                {event.organizer.user_type === "organization"
-                                    ? "Organization"
-                                    : event.organizer.profile.occupation || "Event Organizer"}
+                                Event Organizer
                             </p>
                         </Link>
                     </div>
@@ -165,7 +165,7 @@ const EventDetailMeta = ({ event }: EventDetailMetaProps) => {
                                 <p className="normal-text font-bold text-secondary">FREE</p>
                             ) : (
                                 <p className="normal-text font-semibold text-slate-900">
-                                    {event.currency} {event.price.toFixed(2)}
+                                    {event.currency} {priceValue.toFixed(2)}
                                 </p>
                             )}
                         </div>

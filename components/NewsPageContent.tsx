@@ -8,22 +8,21 @@ import {
     NewsGrid,
     BreakingNewsBar,
 } from "@/components";
-import { NewsArticle } from "@/types/news.types";
+import { NewsArticle, NewsCategory, NewsTag, PaginatedNewsResponse } from "@/types/news.types";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
-
-// Items per page for pagination
-const ITEMS_PER_PAGE = 12;
 
 interface NewsPageContentProps {
     initialArticles: NewsArticle[];
-    availableCategories: { slug: string; name: string; color: string }[];
-    availableTags: { slug: string; name: string }[];
+    availableCategories: NewsCategory[];
+    availableTags: NewsTag[];
+    totalCount: number;
 }
 
 const NewsPageContent = ({
     initialArticles,
     availableCategories,
     availableTags,
+    totalCount,
 }: NewsPageContentProps) => {
     const {
         filters,
@@ -34,130 +33,95 @@ const NewsPageContent = ({
         hasActiveFilters,
     } = useNewsFilters();
 
-    const [displayedArticles, setDisplayedArticles] = useState<NewsArticle[]>([]);
+    const [displayedArticles, setDisplayedArticles] = useState<NewsArticle[]>(initialArticles);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(totalCount > initialArticles.length);
+    const [total, setTotal] = useState(totalCount);
 
-    // Get breaking news
+    // Get breaking news from displayed articles
     const breakingNews = useMemo(() => {
-        return initialArticles.filter((article) => article.is_breaking).slice(0, 5);
-    }, [initialArticles]);
+        return displayedArticles.filter((article) => article.is_breaking).slice(0, 5);
+    }, [displayedArticles]);
 
-    // Filter and sort articles
-    const filteredAndSortedArticles = useMemo(() => {
-        let result = [...initialArticles];
+    // Fetch articles from API when filters or sort change
+    useEffect(() => {
+        const fetchArticles = async () => {
+            setIsLoading(true);
+            try {
+                // Build query params
+                const params = new URLSearchParams();
+                
+                if (filters.search) params.set('search', filters.search);
+                if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
+                if (filters.tag.length > 0) params.set('tag', filters.tag[0]);
+                if (filters.is_featured) params.set('is_featured', 'true');
+                if (filters.is_breaking) params.set('is_breaking', 'true');
+                if (filters.is_trending) params.set('is_trending', 'true');
+                if (filters.date_from) params.set('date_from', filters.date_from);
+                if (filters.date_to) params.set('date_to', filters.date_to);
+                params.set('ordering', sort);
+                params.set('page', '1');
 
-        // Apply search filter
-        if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
-            result = result.filter(
-                (article) =>
-                    article.title.toLowerCase().includes(searchLower) ||
-                    article.summary.toLowerCase().includes(searchLower) ||
-                    article.author.full_name.toLowerCase().includes(searchLower)
-            );
-        }
+                const response = await fetch(`/api/news?${params.toString()}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch news');
+                }
 
-        // Apply category filter
-        if (filters.category.length > 0) {
-            result = result.filter((article) =>
-                filters.category.includes(article.category.slug)
-            );
-        }
+                const data: PaginatedNewsResponse = await response.json();
 
-        // Apply tag filter
-        if (filters.tag.length > 0) {
-            result = result.filter((article) =>
-                article.tags?.some((tag) => filters.tag.includes(tag.slug))
-            );
-        }
-
-        // Apply featured filter
-        if (filters.is_featured) {
-            result = result.filter((article) => article.is_featured);
-        }
-
-        // Apply breaking filter
-        if (filters.is_breaking) {
-            result = result.filter((article) => article.is_breaking);
-        }
-
-        // Apply trending filter
-        if (filters.is_trending) {
-            result = result.filter((article) => article.is_trending);
-        }
-
-        // Apply date filters
-        if (filters.date_from) {
-            const fromDate = new Date(filters.date_from);
-            result = result.filter(
-                (article) => new Date(article.published_at!) >= fromDate
-            );
-        }
-
-        if (filters.date_to) {
-            const toDate = new Date(filters.date_to);
-            toDate.setHours(23, 59, 59, 999); // End of day
-            result = result.filter(
-                (article) => new Date(article.published_at!) <= toDate
-            );
-        }
-
-        // Apply sorting
-        result.sort((a, b) => {
-            switch (sort) {
-                case "-published_at":
-                    return (
-                        new Date(b.published_at!).getTime() -
-                        new Date(a.published_at!).getTime()
-                    );
-                case "-created_at":
-                    return (
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime()
-                    );
-                case "-views_count":
-                    return b.views_count - a.views_count;
-                case "-likes_count":
-                    return b.likes_count - a.likes_count;
-                case "-comments_count":
-                    return b.comments_count - a.comments_count;
-                case "-shares_count":
-                    return b.shares_count - a.shares_count;
-                default:
-                    return 0;
+                setDisplayedArticles(data.results);
+                setTotal(data.count);
+                setHasMore(!!data.next);
+                setCurrentPage(1);
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            } finally {
+                setIsLoading(false);
             }
-        });
+        };
 
-        return result;
-    }, [initialArticles, filters, sort]);
-
-    // Paginated articles
-    const paginatedArticles = useMemo(() => {
-        return filteredAndSortedArticles.slice(0, currentPage * ITEMS_PER_PAGE);
-    }, [filteredAndSortedArticles, currentPage]);
-
-    const hasMore = paginatedArticles.length < filteredAndSortedArticles.length;
-
-    // Update displayed articles when paginated articles change
-    useEffect(() => {
-        setDisplayedArticles(paginatedArticles);
-    }, [paginatedArticles]);
-
-    // Reset page when filters change
-    useEffect(() => {
-        setCurrentPage(1);
+        fetchArticles();
     }, [filters, sort]);
 
-    // Load more articles (infinite scroll)
-    const handleLoadMore = () => {
-        if (!isLoading && hasMore) {
-            setIsLoading(true);
-            // Simulate loading delay
-            setTimeout(() => {
-                setCurrentPage((prev) => prev + 1);
-                setIsLoading(false);
-            }, 500);
+    // Load more articles (pagination)
+    const handleLoadMore = async () => {
+        if (isLoading || !hasMore) return;
+
+        setIsLoading(true);
+        try {
+            const nextPage = currentPage + 1;
+            
+            // Build query params
+            const params = new URLSearchParams();
+            
+            if (filters.search) params.set('search', filters.search);
+            if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
+            if (filters.tag.length > 0) params.set('tag', filters.tag[0]);
+            if (filters.is_featured) params.set('is_featured', 'true');
+            if (filters.is_breaking) params.set('is_breaking', 'true');
+            if (filters.is_trending) params.set('is_trending', 'true');
+            if (filters.date_from) params.set('date_from', filters.date_from);
+            if (filters.date_to) params.set('date_to', filters.date_to);
+            params.set('ordering', sort);
+            params.set('page', nextPage.toString());
+
+            const response = await fetch(`/api/news?${params.toString()}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to load more news');
+            }
+
+            const data: PaginatedNewsResponse = await response.json();
+
+            setDisplayedArticles(prev => [...prev, ...data.results]);
+            setHasMore(!!data.next);
+            setCurrentPage(nextPage);
+        } catch (error) {
+            console.error('Error loading more news:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -194,10 +158,9 @@ const NewsPageContent = ({
                         <div className="flex items-center justify-between gap-4 flex-wrap">
                             <p className="normal-text text-slate-600">
                                 <span className="font-bold text-slate-900">
-                                    {filteredAndSortedArticles.length}
+                                    {total}
                                 </span>{" "}
-                                {filteredAndSortedArticles.length === 1 ? "article" : "articles"}{" "}
-                                found
+                                {total === 1 ? "article" : "articles"} found
                             </p>
                         </div>
 

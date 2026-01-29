@@ -1,8 +1,8 @@
 import { DashboardNav } from "@/components"
-import { currentUser } from "@/data/dummy.general"
+import { getCurrentUser } from "../lib/auth"
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
-    const user = currentUser
+    const user = await getCurrentUser();
 
     return (
         <DashboardNav user={user}>
