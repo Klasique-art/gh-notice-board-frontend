@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { MapPin, Link as LinkIcon, Twitter, Linkedin, Github } from "lucide-react";
-import { Author } from "@/types/news.types";
+import { AuthorFull } from "@/types/news.types";
 
 interface NewsDetailAuthorProps {
-    author: Author;
+    author: AuthorFull;
 }
 
 const NewsDetailAuthor = ({ author }: NewsDetailAuthorProps) => {
@@ -36,8 +36,12 @@ const NewsDetailAuthor = ({ author }: NewsDetailAuthorProps) => {
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-primary text-white big-text-4 font-bold">
-                            {author.first_name[0]}
-                            {author.last_name[0]}
+                            {author.display_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()}
                         </div>
                     )}
                 </Link>

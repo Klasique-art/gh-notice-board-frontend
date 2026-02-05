@@ -1,19 +1,26 @@
 "use client";
-
-import { useState, useMemo } from "react";
-import { DiasporaPost } from "@/types/diaspora.types";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion } from "framer-motion";
+import { DiasporaPost, DiasporaContentType } from "@/types/diaspora.types";
 import { Section } from "@/components";
 import DiasporaFilters from "./DiasporaFilters";
 import DiasporaSortTabs from "./DiasporaSortTabs";
 import DiasporaGrid from "./DiasporaGrid";
 import DiasporaEmptyState from "./DiasporaEmptyState";
 import { useDiasporaFilters } from "@/hooks/useDiasporaFilters";
+import { getDiasporaPosts } from "@/app/lib/diaspora";
 
 interface DiasporaPageContentProps {
     initialPosts: DiasporaPost[];
+    initialNext: string | null;
+    initialCount: number;
 }
 
-const DiasporaPageContent = ({ initialPosts }: DiasporaPageContentProps) => {
+const DiasporaPageContent = ({
+    initialPosts,
+    initialNext,
+    initialCount
+}: DiasporaPageContentProps) => {
     const {
         search,
         setSearch,
@@ -31,96 +38,63 @@ const DiasporaPageContent = ({ initialPosts }: DiasporaPageContentProps) => {
         hasActiveFilters,
     } = useDiasporaFilters();
 
-    // Pagination state
-    const [displayCount, setDisplayCount] = useState(12);
+    const [posts, setPosts] = useState<DiasporaPost[]>(initialPosts);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(!!initialNext);
+    const [totalCount, setTotalCount] = useState(initialCount);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    // Filter and sort posts
-    const filteredAndSortedPosts = useMemo(() => {
-        let filtered = [...initialPosts];
+    // Track if this is the initial render to avoid double fetching
+    const isInitialRender = useRef(true);
 
-        // Search filter
-        if (search) {
-            const searchLower = search.toLowerCase();
-            filtered = filtered.filter(
-                (post) =>
-                    post.title.toLowerCase().includes(searchLower) ||
-                    post.summary.toLowerCase().includes(searchLower) ||
-                    post.country.toLowerCase().includes(searchLower) ||
-                    post.organization_name.toLowerCase().includes(searchLower)
-            );
-        }
+    // Fetch posts from API
+    const fetchPosts = useCallback(async (isLoadMore: boolean = false) => {
+        setIsLoading(true);
+        try {
+            const pageToFetch = isLoadMore ? currentPage + 1 : 1;
 
-        // Content type filter
-        if (contentTypes.length > 0) {
-            filtered = filtered.filter((post) =>
-                contentTypes.includes(post.content_type)
-            );
-        }
+            const response = await getDiasporaPosts({
+                search,
+                content_type: contentTypes as DiasporaContentType[],
+                region: region || undefined,
+                is_featured: isFeatured || undefined,
+                is_urgent: isUrgent || undefined,
+                ordering: sortBy,
+                page: pageToFetch,
+            });
 
-        // Region filter
-        if (region) {
-            filtered = filtered.filter((post) => post.region === region);
-        }
-
-        // Featured filter
-        if (isFeatured) {
-            filtered = filtered.filter((post) => post.is_featured);
-        }
-
-        // Urgent filter
-        if (isUrgent) {
-            filtered = filtered.filter((post) => post.is_urgent);
-        }
-
-        // Sort
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case "-published_at":
-                    return (
-                        new Date(b.published_at || b.created_at).getTime() -
-                        new Date(a.published_at || a.created_at).getTime()
-                    );
-                case "published_at":
-                    return (
-                        new Date(a.published_at || a.created_at).getTime() -
-                        new Date(b.published_at || b.created_at).getTime()
-                    );
-                case "-views_count":
-                    return b.views_count - a.views_count;
-                case "views_count":
-                    return a.views_count - b.views_count;
-                case "-created_at":
-                    return (
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime()
-                    );
-                case "created_at":
-                    return (
-                        new Date(a.created_at).getTime() -
-                        new Date(b.created_at).getTime()
-                    );
-                default:
-                    return 0;
+            if (isLoadMore) {
+                setPosts((prev) => [...prev, ...response.results]);
+                setCurrentPage((prev) => prev + 1);
+            } else {
+                setPosts(response.results);
+                setCurrentPage(1);
             }
-        });
 
-        return filtered;
-    }, [
-        initialPosts,
-        search,
-        contentTypes,
-        region,
-        isFeatured,
-        isUrgent,
-        sortBy,
-    ]);
+            setHasMore(!!response.next);
+            setTotalCount(response.count);
+        } catch (error) {
+            console.error("Failed to fetch diaspora posts:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [search, contentTypes, region, isFeatured, isUrgent, sortBy, currentPage]);
 
-    // Paginated posts
-    const displayedPosts = filteredAndSortedPosts.slice(0, displayCount);
-    const hasMore = displayCount < filteredAndSortedPosts.length;
+    // Refetch when filters or sort change
+    useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+
+        fetchPosts(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search, contentTypes, region, isFeatured, isUrgent, sortBy]);
 
     const handleLoadMore = () => {
-        setDisplayCount((prev) => prev + 12);
+        if (!isLoading && hasMore) {
+            fetchPosts(true);
+        }
     };
 
     // Calculate active filters count
@@ -157,20 +131,16 @@ const DiasporaPageContent = ({ initialPosts }: DiasporaPageContentProps) => {
                     <div className="normal-text text-slate-600">
                         Showing{" "}
                         <span className="font-bold text-slate-900">
-                            {displayedPosts.length}
-                        </span>{" "}
-                        of{" "}
-                        <span className="font-bold text-slate-900">
-                            {filteredAndSortedPosts.length}
+                            {totalCount}
                         </span>{" "}
                         posts
                     </div>
                 </div>
 
                 {/* Posts Grid or Empty State */}
-                {displayedPosts.length > 0 ? (
+                {posts.length > 0 ? (
                     <DiasporaGrid
-                        posts={displayedPosts}
+                        posts={posts}
                         hasMore={hasMore}
                         onLoadMore={handleLoadMore}
                     />
@@ -184,5 +154,6 @@ const DiasporaPageContent = ({ initialPosts }: DiasporaPageContentProps) => {
         </Section>
     );
 };
+
 
 export default DiasporaPageContent;

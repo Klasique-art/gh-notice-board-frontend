@@ -11,7 +11,7 @@ import {
     OpportunityDetailRelated,
     OpportunityDetailComments,
 } from "@/components";
-import { mockOpportunities } from "@/data/mockOpportunities";
+import { getOpportunityBySlug, getOpportunities } from "@/app/lib/opportunities";
 
 // Type definition for params
 type Props = {
@@ -20,10 +20,16 @@ type Props = {
 
 // Generate static params for all opportunities
 export async function generateStaticParams() {
-    // In production, fetch all opportunity slugs from API
-    return mockOpportunities.map((opportunity) => ({
-        slug: opportunity.slug,
-    }));
+    try {
+        const response = await getOpportunities({ status: 'published', page: 1 });
+        // Only statically generate the first page of results to avoid build timeouts
+        return response.results.map((opportunity) => ({
+            slug: opportunity.slug,
+        }));
+    } catch (error) {
+        console.error("Error generating static params:", error);
+        return [];
+    }
 }
 
 // Generate dynamic metadata for SEO
@@ -31,8 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // Await params (Next.js 15+)
     const { slug } = await params;
 
-    // In production, fetch opportunity from API
-    const opportunity = mockOpportunities.find((o) => o.slug === slug);
+    const opportunity = await getOpportunityBySlug(slug);
 
     if (!opportunity) {
         return {
@@ -42,10 +47,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const deadline = opportunity.deadline
         ? new Date(opportunity.deadline).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-          })
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        })
         : null;
 
     return {
@@ -65,13 +70,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             type: "website",
             images: opportunity.featured_image
                 ? [
-                      {
-                          url: opportunity.featured_image,
-                          width: 1200,
-                          height: 630,
-                          alt: opportunity.title,
-                      },
-                  ]
+                    {
+                        url: opportunity.featured_image,
+                        width: 1200,
+                        height: 630,
+                        alt: opportunity.title,
+                    },
+                ]
                 : [],
             locale: "en_GH",
         },
@@ -89,24 +94,15 @@ const OpportunityDetailPage = async ({ params }: Props) => {
     // Await params (Next.js 15+)
     const { slug } = await params;
 
-    // In production, this would be an API call:
-    // const opportunity = await getOpportunityBySlug(slug);
-    const opportunity = mockOpportunities.find((o) => o.slug === slug);
+    const opportunity = await getOpportunityBySlug(slug);
 
     // Handle 404
     if (!opportunity) {
         notFound();
     }
 
-    // Get related opportunities (same type or category, exclude current)
-    const relatedOpportunities = mockOpportunities
-        .filter(
-            (o) =>
-                (o.opportunity_type === opportunity.opportunity_type ||
-                    o.category?.slug === opportunity.category?.slug) &&
-                o.id !== opportunity.id
-        )
-        .slice(0, 3);
+    // Get related opportunities from the API response
+    const relatedOpportunities = opportunity.related_opportunities || [];
 
     return (
         <main className="min-h-screen bg-slate-50">

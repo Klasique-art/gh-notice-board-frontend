@@ -1,6 +1,6 @@
 "use client";
 
-import { EventsResponse } from "@/types/events.types";
+import { PaginatedEventsResponse } from "@/types/events.types";
 import {
     MyEventsHeader,
     MyEventsStats,
@@ -10,7 +10,7 @@ import {
 } from "@/components";
 
 interface MyEventsContentProps {
-    events: EventsResponse;
+    events: PaginatedEventsResponse;
 }
 
 const MyEventsContent = ({ events }: MyEventsContentProps) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
     OpportunityFilters,
@@ -9,18 +9,20 @@ import {
 } from "@/components";
 import { Opportunity } from "@/types/opportunities.types";
 import { useOpportunityFilters } from "@/hooks/useOpportunityFilters";
-
-// Items per page for pagination
-const ITEMS_PER_PAGE = 12;
+import { getOpportunities } from "@/app/lib/opportunities";
 
 interface OpportunityPageContentProps {
     initialOpportunities: Opportunity[];
     availableCategories: { slug: string; name: string; color: string }[];
+    initialNext: string | null;
+    initialCount: number;
 }
 
 const OpportunityPageContent = ({
     initialOpportunities,
     availableCategories,
+    initialNext,
+    initialCount,
 }: OpportunityPageContentProps) => {
     const {
         filters,
@@ -31,122 +33,65 @@ const OpportunityPageContent = ({
         hasActiveFilters,
     } = useOpportunityFilters();
 
-    const [displayedOpportunities, setDisplayedOpportunities] = useState<
-        Opportunity[]
-    >([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [opportunities, setOpportunities] = useState<Opportunity[]>(initialOpportunities);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(!!initialNext);
+    const [totalCount, setTotalCount] = useState(initialCount);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    // Filter and sort opportunities
-    const filteredAndSortedOpportunities = useMemo(() => {
-        let result = [...initialOpportunities];
+    // Track if this is the initial render to avoid double fetching
+    const isInitialRender = useRef(true);
 
-        // Apply search filter
-        if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
-            result = result.filter(
-                (opp) =>
-                    opp.title.toLowerCase().includes(searchLower) ||
-                    opp.summary.toLowerCase().includes(searchLower) ||
-                    opp.organization_name.toLowerCase().includes(searchLower) ||
-                    opp.location.toLowerCase().includes(searchLower)
-            );
-        }
+    // Fetch opportunities from API
+    const fetchOpportunities = useCallback(async (isLoadMore: boolean = false) => {
+        setIsLoading(true);
+        try {
+            const pageToFetch = isLoadMore ? currentPage + 1 : 1;
 
-        // Apply opportunity type filter
-        if (filters.opportunity_type.length > 0) {
-            result = result.filter((opp) =>
-                filters.opportunity_type.includes(opp.opportunity_type)
-            );
-        }
+            const response = await getOpportunities({
+                ...filters,
+                opportunity_type: filters.opportunity_type as any,
+                category: filters.category as string[],
+                ordering: sort,
+                page: pageToFetch,
+            });
 
-        // Apply category filter
-        if (filters.category.length > 0) {
-            result = result.filter((opp) =>
-                filters.category.some((catSlug) =>
-                    opp.category ? opp.category.slug === catSlug : false
-                )
-            );
-        }
-
-        // Apply remote filter
-        if (filters.is_remote) {
-            result = result.filter((opp) => opp.is_remote);
-        }
-
-        // Apply diaspora filter
-        if (filters.is_diaspora) {
-            result = result.filter((opp) => opp.is_diaspora);
-        }
-
-        // Apply featured filter
-        if (filters.is_featured) {
-            result = result.filter((opp) => opp.is_featured);
-        }
-
-        // Apply sorting
-        result.sort((a, b) => {
-            switch (sort) {
-                case "-published_at":
-                    return (
-                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                    );
-                case "deadline":
-                    if (!a.deadline) return 1;
-                    if (!b.deadline) return -1;
-                    return (
-                        new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-                    );
-                case "-deadline":
-                    if (!a.deadline) return 1;
-                    if (!b.deadline) return -1;
-                    return (
-                        new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
-                    );
-                case "-views_count":
-                    return b.views_count - a.views_count;
-                case "-created_at":
-                    return (
-                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                    );
-                default:
-                    return 0;
+            if (isLoadMore) {
+                setOpportunities((prev) => [...prev, ...response.results]);
+                setCurrentPage((prev) => prev + 1);
+            } else {
+                setOpportunities(response.results);
+                setCurrentPage(1);
             }
-        });
 
-        return result;
-    }, [initialOpportunities, filters, sort]);
+            setHasMore(!!response.next);
+            setTotalCount(response.count);
+        } catch (error) {
+            console.error("Failed to fetch opportunities:", error);
+            // Handle error (could show toast)
+        } finally {
+            setIsLoading(false);
+        }
+    }, [filters, sort, currentPage]);
 
-    // Paginated opportunities
-    const paginatedOpportunities = useMemo(() => {
-        return filteredAndSortedOpportunities.slice(
-            0,
-            currentPage * ITEMS_PER_PAGE
-        );
-    }, [filteredAndSortedOpportunities, currentPage]);
-
-    const hasMore =
-        paginatedOpportunities.length < filteredAndSortedOpportunities.length;
-
-    // Update displayed opportunities when paginated opportunities change
+    // Refetch when filters or sort change
     useEffect(() => {
-        setDisplayedOpportunities(paginatedOpportunities);
-    }, [paginatedOpportunities]);
+        // Skip first render as we have initial data (only if filters are default?)
+        // Actually, if filters change from default, we must fetch.
+        // But initial render has default filters and initial data.
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
 
-    // Reset page when filters change
-    useEffect(() => {
-        setCurrentPage(1);
+        fetchOpportunities(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters, sort]);
 
-    // Load more opportunities (infinite scroll)
+    // Load more opportunities
     const handleLoadMore = () => {
         if (!isLoading && hasMore) {
-            setIsLoading(true);
-            // Simulate loading delay
-            setTimeout(() => {
-                setCurrentPage((prev) => prev + 1);
-                setIsLoading(false);
-            }, 500);
+            fetchOpportunities(true);
         }
     };
 
@@ -177,9 +122,9 @@ const OpportunityPageContent = ({
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                         <p className="normal-text text-slate-600">
                             <span className="font-bold text-slate-900">
-                                {filteredAndSortedOpportunities.length}
+                                {totalCount}
                             </span>{" "}
-                            {filteredAndSortedOpportunities.length === 1
+                            {totalCount === 1
                                 ? "opportunity"
                                 : "opportunities"}{" "}
                             found
@@ -202,7 +147,7 @@ const OpportunityPageContent = ({
                     transition={{ delay: 0.3 }}
                 >
                     <OpportunityGrid
-                        opportunities={displayedOpportunities}
+                        opportunities={opportunities}
                         isLoading={isLoading}
                         hasMore={hasMore}
                         onLoadMore={handleLoadMore}

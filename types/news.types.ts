@@ -133,6 +133,7 @@ export type NewsArticle = {
     likes_count: number;
     comments_count: number;
     shares_count: number;
+    bookmarks_count: number;
 
     user_liked: boolean;
     user_bookmarked: boolean;
@@ -147,7 +148,8 @@ export type NewsArticle = {
    News Article Detail (Detail View)
 =========================== */
 
-export type NewsArticleDetail = NewsArticle & {
+export type NewsArticleDetail = Omit<NewsArticle, 'author'> & {
+    author: AuthorFull;
     content: string;
     meta_title: string;
     meta_description: string;

@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { TrendingUp, Zap, Star } from "lucide-react";
-import { NewsArticle } from "@/types/news.types";
+import { NewsArticleDetail } from "@/types/news.types";
 import { placeholderImage } from "@/data/constants";
 
 interface NewsDetailHeroProps {
-    article: NewsArticle;
+    article: NewsArticleDetail;
 }
 
 const NewsDetailHero = ({ article }: NewsDetailHeroProps) => {
@@ -39,13 +39,15 @@ const NewsDetailHero = ({ article }: NewsDetailHeroProps) => {
                             {/* Badges */}
                             <div className="flex flex-wrap items-center gap-3">
                                 {/* Category Badge */}
-                                <Link
-                                    href={`/news?category=${article.category.slug}`}
-                                    className="px-3 py-1.5 rounded-lg text-white font-bold small-text transition-all duration-300 hover:scale-105"
-                                    style={{ backgroundColor: article.category.color }}
-                                >
-                                    {article.category.name}
-                                </Link>
+                                {article.category && (
+                                    <Link
+                                        href={`/news?category=${article.category.slug}`}
+                                        className="px-3 py-1.5 rounded-lg text-white font-bold small-text transition-all duration-300 hover:scale-105"
+                                        style={{ backgroundColor: article.category.color }}
+                                    >
+                                        {article.category.name}
+                                    </Link>
+                                )}
 
                                 {/* Breaking News Badge */}
                                 {article.is_breaking && (

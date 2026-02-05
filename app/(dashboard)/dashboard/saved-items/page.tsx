@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import { SavedItemsContent } from "@/components";
 import { mockSavedItemsResponse, mockBookmarkStats } from "@/data/mockBookmarks";
 
@@ -29,7 +30,7 @@ const SavedItemsPage = async ({
     const bookmarks = mockSavedItemsResponse;
     const stats = mockBookmarkStats;
 
-    console.log("SavedItemsPage bookmarks:", bookmarks);
+    // console.log("SavedItemsPage bookmarks:", bookmarks);
 
     return (
         <main className="dash-page">

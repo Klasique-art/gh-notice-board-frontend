@@ -50,12 +50,12 @@ export const navLinks: NavLink[] = [
         url: "/diaspora",
         icon: <FaGlobe />,
     },
-    {
-        id: 6,
-        name: "Announcements",
-        url: "/announcements",
-        icon: <FaBullhorn />,
-    },
+    // {
+    //     id: 6,
+    //     name: "Announcements",
+    //     url: "/announcements",
+    //     icon: <FaBullhorn />,
+    // },
 ];
 
 export const socialLinks = [
@@ -97,12 +97,12 @@ export const profileMenuItems: ProfileMenuItem[] = [
     {
         label: "My events",
         icon: <MdCalendarMonth />,
-        link: "/dashboard/events",
+        link: "/dashboard/my-events",
     },
     {
-        label: "My tickets",
-        icon: <FaTicketAlt />,
-        link: "/dashboard/tickets",
+        label: "Saved Items",
+        icon: <FaBookmark />,
+        link: "/dashboard/saved-items",
     },
     {
         label: "Logout",

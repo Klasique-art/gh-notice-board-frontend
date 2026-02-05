@@ -32,7 +32,7 @@ export interface UserProfile {
 }
 
 export interface CurrentUser {
-    id: number;
+    id: string;
     username: string;
     email: string;
     first_name: string;

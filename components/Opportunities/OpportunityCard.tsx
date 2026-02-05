@@ -14,7 +14,7 @@ import {
     Zap,
 } from "lucide-react";
 
-import { typeConfig } from "@/data/mockOpportunities";
+import { typeConfig } from "@/data/opportunityConfig";
 import { Opportunity } from "@/types/opportunities.types";
 
 interface OpportunityCardProps {
@@ -122,10 +122,10 @@ const OpportunityCard = ({ opportunity, index = 0 }: OpportunityCardProps) => {
                             <div className="flex items-center gap-2">
                                 <span
                                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full small-text-2 font-semibold ${isUrgent
-                                            ? "bg-red-100 text-red-700"
-                                            : isExpiringSoon
-                                                ? "bg-amber-100 text-amber-700"
-                                                : "bg-green-100 text-green-700"
+                                        ? "bg-red-100 text-red-700"
+                                        : isExpiringSoon
+                                            ? "bg-amber-100 text-amber-700"
+                                            : "bg-green-100 text-green-700"
                                         }`}
                                 >
                                     <Clock className="w-3 h-3" />

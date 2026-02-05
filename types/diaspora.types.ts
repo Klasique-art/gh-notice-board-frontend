@@ -177,6 +177,8 @@ export interface DiasporaFilters {
     region?: DiasporaRegion;
     is_featured?: boolean;
     is_urgent?: boolean;
+    page?: number;
+    ordering?: string;
 }
 
 export type DiasporaSortOption =
@@ -186,5 +188,12 @@ export type DiasporaSortOption =
     | "views_count"
     | "-created_at"
     | "created_at";
+
+export type PaginatedDiasporaResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: DiasporaPost[];
+};
 
 export type { User, Tag, Category } from "./opportunities.types";

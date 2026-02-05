@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { NewsArticle } from "@/types/news.types";
+import { NewsArticleDetail } from "@/types/news.types";
 
 interface NewsDetailContentProps {
-    article: NewsArticle;
+    article: NewsArticleDetail;
 }
 
 const NewsDetailContent = ({ article }: NewsDetailContentProps) => {

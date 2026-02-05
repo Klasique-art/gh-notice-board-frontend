@@ -13,15 +13,13 @@ type Props<Values extends StringFieldFormValues = StringFieldFormValues> = {
     rows?: number;
     styles?: string;
     options?: Option[];
-    type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'select' | 'date';
+    type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'select' | 'date' | 'datetime-local';
     required?: boolean;
     placeholder?: string;
     min?: string;
     max?: string;
-} & Omit<
-    React.ComponentPropsWithoutRef<typeof TextInput>,
-    'name' | 'label' | 'value' | 'onChange' | 'onBlur'
->;
+    onBlur?: () => void;
+};
 
 const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValues>({
     name,
@@ -35,7 +33,7 @@ const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValu
     placeholder,
     min,
     max,
-    ...props
+    onBlur,
 }: Props<Values>) => {
     const { errors, setFieldTouched, handleChange, touched, values } = useFormikContext<Values>();
 
@@ -45,41 +43,40 @@ const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValu
 
     return (
         <div className={`flex flex-col gap-2 ${styles}`}>
-            {type === 'select' ? (
+            {(type as string) === 'select' ? (
                 <SelectInput
                     name={name}
                     label={label}
                     value={value}
                     onChange={handleChange(name)}
-                    onBlur={() => setFieldTouched(name)}
+                    onBlur={onBlur || (() => setFieldTouched(name))}
                     options={options}
                     required={required}
                     placeholder={placeholder}
                 />
-            ) : type === 'date' ? (
+            ) : (type as string) === 'date' || (type as string) === 'datetime-local' ? (
                 <DateInput
                     name={name}
                     label={label}
                     value={value}
                     onChange={handleChange(name)}
-                    onBlur={() => setFieldTouched(name)}
+                    onBlur={onBlur || (() => setFieldTouched(name))}
                     required={required}
                     min={min}
                     max={max}
                 />
             ) : (
                 <TextInput
-                    type={type}
+                    type={type as 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'}
                     name={name}
                     label={label}
                     multiline={multiline}
                     rows={rows}
-                    onBlur={() => setFieldTouched(name)}
+                    onBlur={onBlur || (() => setFieldTouched(name))}
                     onChange={handleChange(name)}
                     value={value}
                     required={required}
                     placeholder={placeholder}
-                    {...props}
                 />
             )}
             <AppErrorMessage error={error} visible={isTouched} />

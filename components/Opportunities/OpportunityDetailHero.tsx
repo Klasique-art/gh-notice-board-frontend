@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Clock, MapPin, Globe, Briefcase, Zap, Star, AlertCircle } from "lucide-react";
 import { Opportunity } from "@/types/opportunities.types";
 import { placeholderImage } from "@/data/constants";
-import { typeConfig } from "@/data/mockOpportunities";
+import { typeConfig } from "@/data/opportunityConfig";
 
 interface OpportunityDetailHeroProps {
     opportunity: Opportunity;
@@ -163,13 +163,12 @@ const OpportunityDetailHero = ({ opportunity }: OpportunityDetailHeroProps) => {
                 {/* Deadline Badge (Floating) */}
                 {opportunity.deadline && daysUntilDeadline !== null && daysUntilDeadline > 0 && (
                     <div
-                        className={`absolute top-8 right-8 rounded-xl p-4 shadow-2xl ${
-                            isUrgent
+                        className={`absolute top-8 right-8 rounded-xl p-4 shadow-2xl ${isUrgent
                                 ? "bg-accent text-white"
                                 : isExpiringSoon
-                                ? "bg-secondary text-primary"
-                                : "bg-white text-slate-900"
-                        }`}
+                                    ? "bg-secondary text-primary"
+                                    : "bg-white text-slate-900"
+                            }`}
                     >
                         <div className="text-center">
                             <div className="massive-text font-bold leading-none">

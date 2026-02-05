@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Eye, MessageCircle } from "lucide-react";
-import { NewsArticle } from "@/types/news.types";
+import { NewsArticleDetail } from "@/types/news.types";
 
 interface NewsDetailMetaProps {
-    article: NewsArticle;
+    article: NewsArticleDetail;
 }
 
 const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
@@ -65,8 +65,12 @@ const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-primary text-white normal-text font-bold">
-                                {article.author.first_name[0]}
-                                {article.author.last_name[0]}
+                                {article.author.display_name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .slice(0, 2)
+                                    .join("")
+                                    .toUpperCase()}
                             </div>
                         )}
                     </Link>
@@ -91,7 +95,7 @@ const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
                                 )}
                             </div>
                             <p className="small-text text-slate-600">
-                                {article.author.profile.occupation || "Writer"} at {article.author.profile.company || "Ghana Notice Board"}
+                                {article.author.profile?.occupation || "Writer"} at {article.author.profile?.company || "Ghana Notice Board"}
                             </p>
                         </Link>
                     </div>
@@ -130,7 +134,7 @@ const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
                         <div>
                             <p className="small-text-2 text-slate-500">Views</p>
                             <p className="small-text font-semibold">
-                                {formatNumber(article.views_count)}
+                                {formatNumber(article.views_count || 0)}
                             </p>
                         </div>
                     </div>
@@ -141,7 +145,7 @@ const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
                         <div>
                             <p className="small-text-2 text-slate-500">Comments</p>
                             <p className="small-text font-semibold">
-                                {formatNumber(article.comments_count)}
+                                {formatNumber(article.comments_count || 0)}
                             </p>
                         </div>
                     </div>

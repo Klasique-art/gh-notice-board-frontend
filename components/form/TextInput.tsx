@@ -14,7 +14,7 @@ const TextInput = ({
     iconAria,
     iconClick,
     required = false,
-    type = 'text',
+    type = 'text' as 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local',
     ...otherProps
 }: TextInputProps) => {
     const inputId = `input-${name}`;
@@ -22,7 +22,7 @@ const TextInput = ({
     // Map icon names to Lucide components
     const getIconComponent = () => {
         if (!icon) return null;
-        
+
         switch (icon) {
             case 'eye':
                 return <Eye className="w-5 h-5" aria-hidden="true" />;
@@ -36,8 +36,8 @@ const TextInput = ({
 
     return (
         <div className="w-full">
-            <label 
-                htmlFor={inputId} 
+            <label
+                htmlFor={inputId}
                 className='block mb-2 normal-text font-semibold text-slate-900'
             >
                 {label}

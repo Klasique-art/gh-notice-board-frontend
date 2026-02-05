@@ -25,12 +25,6 @@ const MyEventsHeader = ({ count }: MyEventsHeaderProps) => {
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
                     <AppButton
-                        variant="secondary"
-                        className="flex items-center gap-2"
-                        title="My Tickets"
-                        url="/dashboard/my-tickets"
-                    />
-                    <AppButton
                         variant="primary"
                         className="flex items-center gap-2"
                         title="Create Event"

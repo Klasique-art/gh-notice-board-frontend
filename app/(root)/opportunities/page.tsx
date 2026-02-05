@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { OpportunityHero, OpportunityPageContent } from "@/components";
-import { mockOpportunities } from "@/data/mockOpportunities";
+
+import { getOpportunities } from "@/app/lib/opportunities";
 
 // SEO Metadata
 export const metadata: Metadata = {
@@ -37,9 +38,13 @@ export const metadata: Metadata = {
 
 // Server Component - Fetches data and prepares props
 const OpportunitiesPage = async () => {
-  // In production, this would be an API call:
-  // const opportunities = await getOpportunities();
-  const opportunities = mockOpportunities;
+  // Fetch published opportunities
+  const opportunitiesData = await getOpportunities({
+    status: 'published',
+    page: 1
+  });
+
+  const opportunities = opportunitiesData.results || [];
 
   // Extract unique categories (if opportunities have categories)
   const categoriesSet = new Set<string>();
@@ -72,6 +77,8 @@ const OpportunitiesPage = async () => {
       <OpportunityPageContent
         initialOpportunities={opportunities}
         availableCategories={uniqueCategories}
+        initialNext={opportunitiesData.next}
+        initialCount={opportunitiesData.count}
       />
     </main>
   );

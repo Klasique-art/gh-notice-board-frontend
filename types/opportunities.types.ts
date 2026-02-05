@@ -215,3 +215,31 @@ export interface OpportunityImage {
     order: number;
     created_at: string;
 }
+
+/* ===========================
+   Paginated Response
+=========================== */
+
+export type PaginatedOpportunitiesResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: Opportunity[];
+};
+
+/* ===========================
+   Opportunity Filters
+=========================== */
+
+export type OpportunityFilters = {
+    search?: string;
+    opportunity_type?: OpportunityType | OpportunityType[];
+    category?: string | string[]; // slug
+    category_slug?: string | string[];
+    is_featured?: boolean;
+    is_remote?: boolean;
+    is_diaspora?: boolean;
+    status?: OpportunityStatus;
+    page?: number;
+    ordering?: string; // e.g. '-published_at'
+};

@@ -16,6 +16,7 @@ type InputProps = Omit<
 > & {
     value?: string;
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local';
 };
 
 type TextareaProps = Omit<

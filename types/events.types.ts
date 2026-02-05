@@ -7,7 +7,7 @@
 export type UserType = "regular" | "journalist" | "organization" | "government" | "verified";
 
 export type Organizer = {
-    id: number;
+    id: string;  // ✅ Changed from number to string (UUID)
     username: string;
     full_name: string;
     display_name: string;
@@ -29,7 +29,6 @@ export type EventCategory = {
     color: string;
     is_active: boolean;
     order: number;
-    events_count?: number;
     created_at: string;
     updated_at: string;
 };
@@ -42,13 +41,11 @@ export type EventTag = {
     id: number;
     name: string;
     slug: string;
-    description: string;
-    category: number;
-    category_name: string;
-    usage_count: number;
-    is_active: boolean;
-    created_at: string;
-    is_subscribed: boolean;
+    description?: string;  // ✅ Optional in backend
+    category?: number;  // ✅ Optional
+    usage_count?: number;  // ✅ Optional
+    is_trending?: boolean;  // ✅ This exists on tags
+    created_at?: string;  // ✅ Optional
 };
 
 /* ===========================
@@ -89,33 +86,29 @@ export type Event = {
     timezone: string;
     
     is_featured: boolean;
-    is_trending: boolean;
+    is_recurring: boolean;  // ✅ Added from backend
     status: EventStatus;
     
     registration_required: boolean;
+    registration_url: string;  // ✅ Added
+    registration_deadline: string | null;  // ✅ Added
     max_attendees: number;
     registered_count: number;
+    allow_waitlist: boolean;  // ✅ Added
+    waitlist_count: number;  // ✅ Added
     
     views_count: number;
     likes_count: number;
     shares_count: number;
-    
-    user_registered: boolean;
-    user_liked: boolean;
-    user_bookmarked: boolean;
-    
-    is_upcoming: boolean;
-    is_ongoing: boolean;
-    is_past: boolean;
-    days_until: number | null;
+    bookmarks_count: number;  // ✅ Added
+    comments_count: number;  // ✅ Added
     
     price: string; // Decimal as string
-    currency: string;
-    early_bird_price: string | null;
-    early_bird_deadline: string | null;
+    is_free: boolean;  // ✅ Added
     
     created_at: string;
     updated_at: string;
+    published_at: string | null;  // ✅ Added
 };
 
 /* ===========================
@@ -123,24 +116,27 @@ export type Event = {
 =========================== */
 
 export type EventSpeaker = {
-    id: number;
+    id: string;  // ✅ Changed to string (UUID)
+    event: string;  // ✅ Added - event UUID
     name: string;
     title: string;
     bio: string;
     photo: string | null;
+    company: string;  // ✅ Added
     linkedin_url: string;
     twitter_username: string;
-    website: string;
+    website: string;  // ✅ Added
     order: number;
 };
 
 export type EventSponsor = {
-    id: number;
+    id: string;  // ✅ Changed to string (UUID)
+    event: string;  // ✅ Added - event UUID
     name: string;
-    logo: string;
-    website: string;
+    logo: string | null;  // ✅ Can be null
+    website_url: string;  // ✅ Changed field name
     description: string;
-    sponsorship_level: "title" | "platinum" | "gold" | "silver" | "bronze" | "partner";
+    sponsor_level: "platinum" | "gold" | "silver" | "bronze";  // ✅ Fixed levels
     order: number;
 };
 
@@ -154,16 +150,18 @@ export type EventImage = {
 };
 
 export type EventRegistration = {
-    id: number;
-    user: Organizer;
-    registration_type: string;
-    ticket_number: string;
-    attendance_status: string;
-    checked_in_at: string | null;
-    special_requirements: string;
-    is_speaker: boolean;
-    is_vip: boolean;
-    created_at: string;
+    id: string;  // ✅ Changed to string (UUID)
+    event: string;  // ✅ Event UUID
+    user: Organizer | null;  // ✅ Can be null for non-users
+    first_name: string;  // ✅ Added
+    last_name: string;  // ✅ Added
+    email: string;  // ✅ Added
+    phone: string;  // ✅ Added
+    registration_type: 'attendee' | 'speaker' | 'sponsor' | 'volunteer';  // ✅ Added types
+    status: 'confirmed' | 'waitlist' | 'cancelled';  // ✅ Added
+    attended: boolean;  // ✅ Added
+    additional_info: Record<string, any>;  // ✅ Added
+    registered_at: string;  // ✅ Changed field name
 };
 
 export type EventDetail = Event & {
@@ -176,28 +174,15 @@ export type EventDetail = Event & {
     
     registration_instructions: string;
     cancellation_policy: string;
-    covid_safety_measures: string;
-    parking_info: string;
-    accessibility_info: string;
     
     contact_email: string;
     contact_phone: string;
     website_url: string;
-    facebook_event_url: string;
-    livestream_url: string;
     
     speakers: EventSpeaker[];
     sponsors: EventSponsor[];
-    gallery_images: EventImage[];
-    registration_list: EventRegistration[];
-    related_events: Event[];
-    
-    is_cancelled: boolean;
-    cancellation_reason: string;
-    allow_waitlist: boolean;
-    waitlist_count: number;
-    check_in_code: string;
-    certificate_template: string;
+    gallery_images: EventImage[];  // ✅ If backend has this
+    related_events: Event[];  // ✅ If backend has this
 };
 
 /* ===========================
@@ -217,17 +202,15 @@ export type PaginatedEventsResponse = {
 
 export type EventFilters = {
     search?: string;
-    category?: string; // UUID
-    category_slug?: string;
-    tag?: string; // slug
-    organizer?: string; // UUID
-    status?: EventStatus | 'all';
+    category?: number;  // ✅ Changed from string to number
+    status?: EventStatus;  // ✅ Removed 'all' - handle in UI
     event_type?: EventType;
     is_featured?: boolean;
-    is_trending?: boolean;
-    is_upcoming?: boolean;
-    start_date_from?: string; // YYYY-MM-DD
-    start_date_to?: string; // YYYY-MM-DD
-    ordering?: string; // e.g., 'start_date', '-start_date'
+    is_free?: boolean;  // ✅ Added
+    start_date__gte?: string;  // ✅ Changed field name to match backend
+    start_date__lte?: string;  // ✅ Changed field name to match backend
+    location?: string;  // ✅ Added
+    ordering?: string; // e.g., 'start_date', '-created_at'
     page?: number;
+    page_size?: number;  // ✅ Added
 };

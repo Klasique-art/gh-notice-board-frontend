@@ -4,9 +4,9 @@ import {
     DashboardWelcome,
     DashboardStats,
     DashboardQuickActions,
-    DashboardRecentContent,
-    DashboardApplications,
-    DashboardActivitySummary,
+    // DashboardRecentContent,
+    // DashboardApplications,
+    // DashboardActivitySummary,
 } from "@/components";
 import { getCurrentUser } from "@/app/lib/auth";
 

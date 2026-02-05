@@ -12,19 +12,19 @@ interface NewsDetailEngagementProps {
 const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
     const [isLiked, setIsLiked] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
-    const [likesCount, setLikesCount] = useState(article.likes_count);
-    const [bookmarksCount, setBookmarksCount] = useState(article.bookmarks_count);
+    const [likesCount, setLikesCount] = useState(article.likes_count || 0);
+    const [bookmarksCount, setBookmarksCount] = useState(article.bookmarks_count || 0);
 
     const handleLike = () => {
         // In production, call API to like article
         setIsLiked(!isLiked);
-        setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+        setLikesCount((prev: number) => (isLiked ? prev - 1 : prev + 1));
     };
 
     const handleBookmark = () => {
         // In production, call API to bookmark article
         setIsBookmarked(!isBookmarked);
-        setBookmarksCount((prev) => (isBookmarked ? prev - 1 : prev + 1));
+        setBookmarksCount((prev: number) => (isBookmarked ? prev - 1 : prev + 1));
     };
 
     const handleShare = () => {
@@ -59,17 +59,16 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
                     {/* Like Button */}
                     <button
                         onClick={handleLike}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${
-                            isLiked
-                                ? "bg-accent/10 text-accent border-2 border-accent"
-                                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border-2 border-transparent"
-                        }`}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${isLiked
+                            ? "bg-accent/10 text-accent border-2 border-accent"
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200 border-2 border-transparent"
+                            }`}
                         aria-label="Like article"
                     >
                         <Heart
                             className={`w-5 h-5 ${isLiked ? "fill-accent" : ""}`}
                         />
-                        <span>{likesCount.toLocaleString()}</span>
+                        <span>{(likesCount || 0).toLocaleString()}</span>
                     </button>
 
                     {/* Comment Button */}
@@ -79,7 +78,7 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
                         aria-label="View comments"
                     >
                         <MessageCircle className="w-5 h-5" />
-                        <span>{article.comments_count.toLocaleString()}</span>
+                        <span>{(article.comments_count || 0).toLocaleString()}</span>
                     </button>
                 </div>
 
@@ -88,11 +87,10 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
                     {/* Bookmark Button */}
                     <button
                         onClick={handleBookmark}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${
-                            isBookmarked
-                                ? "bg-secondary/20 text-primary border-2 border-secondary"
-                                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border-2 border-transparent"
-                        }`}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${isBookmarked
+                            ? "bg-secondary/20 text-primary border-2 border-secondary"
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200 border-2 border-transparent"
+                            }`}
                         aria-label="Bookmark article"
                     >
                         <Bookmark
@@ -118,15 +116,15 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
             {/* Engagement Stats (Desktop) */}
             <div className="hidden sm:flex items-center gap-6 mt-4 pt-4 border-t border-slate-200 text-slate-600 small-text">
                 <div className="flex items-center gap-2">
-                    <span className="font-semibold">{article.shares_count.toLocaleString()}</span>
+                    <span className="font-semibold">{(article.shares_count || 0).toLocaleString()}</span>
                     <span>shares</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="font-semibold">{bookmarksCount.toLocaleString()}</span>
+                    <span className="font-semibold">{(bookmarksCount || 0).toLocaleString()}</span>
                     <span>bookmarks</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="font-semibold">{article.views_count.toLocaleString()}</span>
+                    <span className="font-semibold">{(article.views_count || 0).toLocaleString()}</span>
                     <span>views</span>
                 </div>
             </div>

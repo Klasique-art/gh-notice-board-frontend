@@ -1,6 +1,6 @@
-import { Event } from "@/types/events.types";
 import Link from "next/link";
 import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 import {
     Calendar,
     MapPin,
@@ -10,10 +10,11 @@ import {
     ExternalLink,
     Edit,
     Video,
-    DollarSign,
     Clock,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+
+import { Event } from "@/types/events.types";
+import { getDaysUntilEvent } from "@/utils/eventHelpers";
 
 interface MyEventCardProps {
     event: Event;
@@ -65,6 +66,9 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
     const registrationPercentage = event.max_attendees
         ? (event.registered_count / event.max_attendees) * 100
         : 0;
+
+    // Calculate days until event
+    const daysUntilEvent = getDaysUntilEvent(event.start_date);
 
     const getEventTypeIcon = () => {
         switch (event.event_type) {
@@ -131,7 +135,7 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
                 {/* Title */}
                 <div>
                     <Link
-                        href={`/events/${event.slug}`}
+                        href={`/events/${event.id}`}
                         className="block group/title mb-2"
                     >
                         <h3 className="big-text-4 font-bold text-slate-900 line-clamp-2 group-hover/title:text-primary transition-colors">
@@ -173,10 +177,7 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
                         </span>
                     ) : (
                         <div className="flex items-center gap-1 small-text text-slate-700 font-semibold">
-                            <DollarSign className="w-4 h-4" aria-hidden="true" />
-                            <span>
-                                GHS {event.price.toLocaleString()}
-                            </span>
+                            <span>GHS {parseFloat(event.price).toLocaleString()}</span>
                         </div>
                     )}
                 </div>
@@ -218,11 +219,11 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
                         <Heart className="w-4 h-4 text-accent" aria-hidden="true" />
                         <span>{event.likes_count.toLocaleString()}</span>
                     </div>
-                    {event.days_until_event && event.days_until_event > 0 && (
+                    {daysUntilEvent && daysUntilEvent > 0 && (
                         <div className="flex items-center gap-1 ml-auto">
                             <Clock className="w-4 h-4" aria-hidden="true" />
                             <span className="font-semibold">
-                                {event.days_until_event} days to go
+                                {daysUntilEvent} day{daysUntilEvent !== 1 ? "s" : ""} to go
                             </span>
                         </div>
                     )}
@@ -231,7 +232,7 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
                 {/* Action Buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-3 border-t-2 border-slate-100">
                     <Link
-                        href={`/events/${event.slug}`}
+                        href={`/events/${event.id}`}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium normal-text-2 transition-colors"
                     >
                         <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -239,7 +240,7 @@ const MyEventCard = ({ event }: MyEventCardProps) => {
                     </Link>
 
                     <Link
-                        href={`/dashboard/my-events/${event.id}/edit`}
+                        href={`/dashboard/my-events/${event.slug}/edit`}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-100 text-white rounded-lg font-medium normal-text-2 transition-colors"
                     >
                         <Edit className="w-4 h-4" aria-hidden="true" />

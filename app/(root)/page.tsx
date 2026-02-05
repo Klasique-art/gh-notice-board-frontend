@@ -1,11 +1,15 @@
 import { Landing, BreakingNewsSection, FeaturedOpportunitiesSection, UpcomingEventsSection, CategoriesSection, CTASection } from "@/components"
 import { mockNews } from "@/data/mockNews"
-import { mockOpportunities } from "@/data/mockOpportunities"
 import { mockEvents } from "@/data/mockEvents"
+import { getFeaturedOpportunities } from "@/app/lib/opportunities"
 
 const HomePage = async () => {
     const breakingNews = mockNews;
-    const featuredOpportunities = mockOpportunities;
+
+    // Fetch featured opportunities
+    const featuredResponse = await getFeaturedOpportunities(6);
+    const featuredOpportunities = featuredResponse.results;
+
     const upcomingEvents = mockEvents;
 
     return (

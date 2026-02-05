@@ -1,6 +1,7 @@
 import { Metadata } from "next";
+
+import { getDiasporaPosts } from "@/app/lib/diaspora";
 import { DiasporaHero, DiasporaPageContent } from "@/components";
-import { mockDiasporaPosts } from "@/data/mockDiaspora";
 
 export const metadata: Metadata = {
   title: "Ghana Diaspora Hub | Ghana Notice Board",
@@ -34,14 +35,22 @@ export const metadata: Metadata = {
   },
 };
 
-const DiasporaPage = () => {
+const DiasporaPage = async () => {
+  // Fetch initial diaspora posts
+  const diasporaData = await getDiasporaPosts({ page: 1 });
+  const posts = diasporaData.results || [];
+
   return (
     <main>
       {/* Hero Section */}
       <DiasporaHero />
 
       {/* Content Section */}
-      <DiasporaPageContent initialPosts={mockDiasporaPosts} />
+      <DiasporaPageContent
+        initialPosts={posts}
+        initialNext={diasporaData.next}
+        initialCount={diasporaData.count}
+      />
     </main>
   );
 };
