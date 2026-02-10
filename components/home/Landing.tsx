@@ -236,7 +236,7 @@ const Landing = () => {
                         className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-lg"
                     >
                         <Link
-                            href="/explore"
+                            href="/opportunities"
                             className="group relative w-full sm:w-auto px-10 py-5 bg-primary hover:bg-primary-100 text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 overflow-hidden"
                         >
                             <motion.div
@@ -246,7 +246,7 @@ const Landing = () => {
                                 transition={{ duration: 0.3 }}
                             />
                             <span className="relative z-10 text-lg font-bold">
-                                Explore Platform
+                                Browse Opportunities
                             </span>
                             <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
