@@ -104,11 +104,14 @@ export type Event = {
     comments_count: number;  // ✅ Added
     
     price: string; // Decimal as string
+    currency?: string; // compatibility with legacy UI usage
     is_free: boolean;  // ✅ Added
     
     created_at: string;
     updated_at: string;
     published_at: string | null;  // ✅ Added
+    is_upcoming?: boolean;
+    is_past?: boolean;
 };
 
 /* ===========================

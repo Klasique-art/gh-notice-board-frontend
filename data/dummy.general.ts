@@ -1,7 +1,7 @@
 import { CurrentUser } from "@/types/general.types";
 
 export const currentUser: CurrentUser = {
-    id: 1,
+    id: "1",
     username: "kwame_mensah",
     email: "kwame.mensah@example.com",
     first_name: "Kwame",

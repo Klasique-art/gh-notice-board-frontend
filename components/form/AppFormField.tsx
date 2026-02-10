@@ -19,6 +19,9 @@ type Props<Values extends StringFieldFormValues = StringFieldFormValues> = {
     min?: string;
     max?: string;
     onBlur?: () => void;
+    icon?: string;
+    iconClick?: () => void;
+    iconAria?: string;
 };
 
 const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValues>({
@@ -34,6 +37,9 @@ const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValu
     min,
     max,
     onBlur,
+    icon,
+    iconClick,
+    iconAria,
 }: Props<Values>) => {
     const { errors, setFieldTouched, handleChange, touched, values } = useFormikContext<Values>();
 
@@ -70,6 +76,9 @@ const AppFormField = <Values extends StringFieldFormValues = StringFieldFormValu
                     type={type as 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'}
                     name={name}
                     label={label}
+                    icon={icon}
+                    iconClick={iconClick}
+                    iconAria={iconAria}
                     multiline={multiline}
                     rows={rows}
                     onBlur={onBlur || (() => setFieldTouched(name))}

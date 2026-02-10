@@ -12,7 +12,7 @@ function normalizeCurrentUser(rawUser: unknown): CurrentUser {
     const user = (rawUser ?? {}) as Partial<CurrentUser> & {
         profile?: Partial<CurrentUser["profile"]> | null;
     };
-    const profile = user.profile ?? {};
+    const profile: Partial<CurrentUser["profile"]> = user.profile ?? {};
 
     return {
         id: user.id ?? "",

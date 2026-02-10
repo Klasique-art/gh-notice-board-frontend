@@ -14,10 +14,10 @@ import {
     Loader2,
     X,
 } from "lucide-react";
-import { Opportunity } from "@/types/opportunities.types";
+import { OpportunityDetail } from "@/types/opportunities.types";
 
 interface OpportunityDetailApplicationProps {
-    opportunity: Opportunity;
+    opportunity: OpportunityDetail;
 }
 
 type ApplyFormState = {
