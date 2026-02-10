@@ -1,13 +1,14 @@
 import { ChevronLeft } from "lucide-react";
+import { redirect } from "next/navigation";
 import { EditProfileForm, AppButton } from "@/components";
-import { currentUser } from "@/data/dummy.general";
+import { getCurrentUser } from "@/app/lib/auth";
 
 const EditProfilePage = async () => {
-    // In production, get user from auth
-    // const user = await getCurrentUser();
-    // if (!user) redirect("/login");
+    const user = await getCurrentUser();
 
-    const user = currentUser;
+    if (!user) {
+        redirect("/login");
+    }
 
     return (
         <main className="dash-page space-y-6">

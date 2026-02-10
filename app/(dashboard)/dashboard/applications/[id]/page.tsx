@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ApplicationDetailsContent } from "@/components";
-import { mockApplications } from "@/data/mockApplications";
+import { getMyApplicationById } from "@/app/lib/applications";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -18,14 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const ApplicationDetailsPage = async ({ params }: Props) => {
   const { id } = await params;
-
-  // In production: Fetch application from API
-  // const user = await getCurrentUser();
-  // if (!user) redirect("/login");
-  // const application = await getMyApplicationDetails(id);
-
-  // Mock data
-  const application = mockApplications.find((app) => app.id === parseInt(id));
+  const parsedId = Number.parseInt(id, 10);
+  const application = Number.isNaN(parsedId)
+    ? null
+    : await getMyApplicationById(parsedId);
 
   if (!application) {
     return (

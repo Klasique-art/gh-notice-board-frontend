@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+
 import { EventHero, EventPageContent } from "@/components";
 import { getEvents } from "@/app/lib/events";
 import { EventCategory } from "@/types/events.types";

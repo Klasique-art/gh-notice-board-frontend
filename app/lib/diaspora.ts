@@ -6,6 +6,22 @@ import {
 } from "@/types/diaspora.types";
 import { BASE_URL } from "@/data/constants";
 
+function normalizeDiasporaResponse(
+    data: PaginatedDiasporaResponse | DiasporaPost[],
+    limit?: number
+): PaginatedDiasporaResponse {
+    if (Array.isArray(data)) {
+        const results = typeof limit === "number" ? data.slice(0, limit) : data;
+        return {
+            count: results.length,
+            next: null,
+            previous: null,
+            results,
+        };
+    }
+    return data;
+}
+
 // Helper to handle API responses
 async function handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
@@ -57,13 +73,14 @@ export async function getDiasporaPosts(
 
         // Fetch from API
         const response = await fetch(
-            `${BASE_URL}/diaspora/posts/?${params.toString()}`,
+            `${BASE_URL}/diaspora/?${params.toString()}`,
             {
                 next: { revalidate: 60 }, // Revalidate every 60 seconds
             }
         );
 
-        return await handleResponse<PaginatedDiasporaResponse>(response);
+        const data = await handleResponse<PaginatedDiasporaResponse | DiasporaPost[]>(response);
+        return normalizeDiasporaResponse(data);
     } catch (error) {
         console.error("Error fetching diaspora posts:", error);
         // Return empty structure on error to prevent page crash
@@ -83,7 +100,7 @@ export async function getDiasporaPostBySlug(
     slug: string
 ): Promise<DiasporaPostDetail | null> {
     try {
-        const response = await fetch(`${BASE_URL}/diaspora/posts/${slug}/`, {
+        const response = await fetch(`${BASE_URL}/diaspora/${slug}/`, {
             next: { revalidate: 300 }, // Cache detail pages longer
         });
 
@@ -102,12 +119,13 @@ export async function getFeaturedDiasporaPosts(
 ): Promise<PaginatedDiasporaResponse> {
     try {
         const response = await fetch(
-            `${BASE_URL}/diaspora/posts/featured/?limit=${limit}`,
+            `${BASE_URL}/diaspora/featured/?limit=${limit}`,
             {
                 next: { revalidate: 3600 },
             }
         );
-        return await handleResponse<PaginatedDiasporaResponse>(response);
+        const data = await handleResponse<PaginatedDiasporaResponse | DiasporaPost[]>(response);
+        return normalizeDiasporaResponse(data, limit);
     } catch (error) {
         console.error("Error fetching featured diaspora posts:", error);
         return { count: 0, next: null, previous: null, results: [] };

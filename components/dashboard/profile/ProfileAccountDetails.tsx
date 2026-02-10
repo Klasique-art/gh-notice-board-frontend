@@ -11,6 +11,8 @@ interface ProfileAccountDetailsProps {
 const ProfileAccountDetails = ({ user }: ProfileAccountDetailsProps) => {
     const [isEditingEmail, setIsEditingEmail] = useState(false);
     const [isEditingUsername, setIsEditingUsername] = useState(false);
+    const skills = Array.isArray(user.profile?.skills) ? user.profile.skills : [];
+    const interests = Array.isArray(user.profile?.interests) ? user.profile.interests : [];
 
     const accountDetails = [
         {
@@ -136,7 +138,7 @@ const ProfileAccountDetails = ({ user }: ProfileAccountDetailsProps) => {
                             Skills
                         </label>
                         <div className="flex flex-wrap gap-2">
-                            {user.profile.skills.map((skill) => (
+                            {skills.map((skill) => (
                                 <span
                                     key={skill}
                                     className="px-3 py-1 bg-primary/10 text-primary rounded-full small-text font-medium"
@@ -156,7 +158,7 @@ const ProfileAccountDetails = ({ user }: ProfileAccountDetailsProps) => {
                             Interests
                         </label>
                         <div className="flex flex-wrap gap-2">
-                            {user.profile.interests.map((interest) => (
+                            {interests.map((interest) => (
                                 <span
                                     key={interest}
                                     className="px-3 py-1 bg-secondary/20 text-primary rounded-full small-text font-medium"

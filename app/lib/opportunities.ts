@@ -3,8 +3,7 @@ import { BASE_URL } from "@/data/constants";
 import {
     PaginatedOpportunitiesResponse,
     OpportunityFilters,
-    OpportunityDetail,
-    Opportunity
+    OpportunityDetail
 } from "@/types/opportunities.types";
 
 /**
@@ -29,7 +28,7 @@ export async function getOpportunities(filters: OpportunityFilters = {}): Promis
             }
         }
 
-        // Handle category (string | string[])
+        // Handle legacy category (string | string[])
         if (filters.category) {
             if (Array.isArray(filters.category)) {
                 filters.category.forEach(cat => params.append('category', cat));
@@ -38,12 +37,23 @@ export async function getOpportunities(filters: OpportunityFilters = {}): Promis
             }
         }
 
-        // Handle category_slug (string | string[])
+        // Handle legacy category_slug (string | string[])
         if (filters.category_slug) {
             if (Array.isArray(filters.category_slug)) {
                 filters.category_slug.forEach(slug => params.append('category_slug', slug));
             } else {
                 params.set('category_slug', filters.category_slug);
+            }
+        }
+
+        // Backend filter key: category__slug
+        if (filters.category__slug) {
+            if (Array.isArray(filters.category__slug)) {
+                filters.category__slug.forEach(slug =>
+                    params.append('category__slug', slug)
+                );
+            } else {
+                params.set('category__slug', filters.category__slug);
             }
         }
 
@@ -142,11 +152,20 @@ export async function getFeaturedOpportunities(limit: number = 5): Promise<Pagin
     // In news.ts: getFeaturedNews calls getNews({ is_featured: true ... }).
     // This seems safer for consistency with the Paginated type.
 
-    return getOpportunities({
+    const response = await getOpportunities({
         is_featured: true,
         ordering: '-published_at',
         page: 1,
     });
+
+    if (limit > 0 && response.results.length > limit) {
+        return {
+            ...response,
+            results: response.results.slice(0, limit),
+        };
+    }
+
+    return response;
 }
 
 

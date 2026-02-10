@@ -1,16 +1,18 @@
-import { Landing, BreakingNewsSection, FeaturedOpportunitiesSection, UpcomingEventsSection, CategoriesSection, CTASection } from "@/components"
-import { mockNews } from "@/data/mockNews"
-import { mockEvents } from "@/data/mockEvents"
-import { getFeaturedOpportunities } from "@/app/lib/opportunities"
+import { Landing, BreakingNewsSection, FeaturedOpportunitiesSection, UpcomingEventsSection, CategoriesSection, CTASection } from "@/components";
+import { getFeaturedOpportunities } from "@/app/lib/opportunities";
+import { getBreakingNews } from "@/app/lib/news";
+import { getUpcomingEvents } from "@/app/lib/events";
 
 const HomePage = async () => {
-    const breakingNews = mockNews;
+    const [breakingNewsResponse, featuredResponse, upcomingEventsResponse] = await Promise.all([
+        getBreakingNews(3),
+        getFeaturedOpportunities(6),
+        getUpcomingEvents(4),
+    ]);
 
-    // Fetch featured opportunities
-    const featuredResponse = await getFeaturedOpportunities(6);
-    const featuredOpportunities = featuredResponse.results;
-
-    const upcomingEvents = mockEvents;
+    const breakingNews = breakingNewsResponse.results || [];
+    const featuredOpportunities = featuredResponse.results || [];
+    const upcomingEvents = upcomingEventsResponse.results || [];
 
     return (
         <main>
@@ -21,7 +23,7 @@ const HomePage = async () => {
             <CategoriesSection />
             <CTASection />
         </main>
-    )
-}
+    );
+};
 
-export default HomePage 
+export default HomePage;

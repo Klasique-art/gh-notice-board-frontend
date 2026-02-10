@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ApplicationsContent } from "@/components";
-import { mockApplicationsResponse } from "@/data/mockApplications";
+import { getMyApplications } from "@/app/lib/applications";
 
 export const metadata: Metadata = {
     title: "My Applications | Ghana Notice Board",
@@ -25,13 +25,12 @@ type Props = {
 
 const ApplicationsPage = async ({ searchParams }: Props) => {
     const params = await searchParams;
-
-    // In production: Fetch user applications from API
-    // const user = await getCurrentUser();
-    // if (!user) redirect("/login");
-    // const applications = await fetchMyApplications(params);
-
-    const applications = mockApplicationsResponse;
+    const applications = await getMyApplications({
+        page: Number.parseInt(params.page || "1", 10),
+        status: params.status,
+        type: params.type,
+        search: params.search,
+    });
 
     return (
         <main className="dash-page">

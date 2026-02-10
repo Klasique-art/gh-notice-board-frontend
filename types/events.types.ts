@@ -160,7 +160,7 @@ export type EventRegistration = {
     registration_type: 'attendee' | 'speaker' | 'sponsor' | 'volunteer';  // ✅ Added types
     status: 'confirmed' | 'waitlist' | 'cancelled';  // ✅ Added
     attended: boolean;  // ✅ Added
-    additional_info: Record<string, any>;  // ✅ Added
+    additional_info: Record<string, unknown>;  // ✅ Added
     registered_at: string;  // ✅ Changed field name
 };
 
@@ -202,14 +202,23 @@ export type PaginatedEventsResponse = {
 
 export type EventFilters = {
     search?: string;
-    category?: number;  // ✅ Changed from string to number
+    category?: string;
+    category_slug?: string;
+    tag?: string;
+    organizer?: string;
     status?: EventStatus;  // ✅ Removed 'all' - handle in UI
     event_type?: EventType;
     is_featured?: boolean;
     is_free?: boolean;  // ✅ Added
-    start_date__gte?: string;  // ✅ Changed field name to match backend
-    start_date__lte?: string;  // ✅ Changed field name to match backend
+    is_virtual?: boolean;
+    date_from?: string;
+    date_to?: string;
+    // Backward-compatible aliases used by existing frontend code
+    start_date__gte?: string;
+    start_date__lte?: string;
     location?: string;  // ✅ Added
+    city?: string;
+    region?: string;
     ordering?: string; // e.g., 'start_date', '-created_at'
     page?: number;
     page_size?: number;  // ✅ Added

@@ -8,9 +8,15 @@ function getTokenExpiration(token: string): number | null {
     try {
         const parts = token.split('.');
         if (parts.length !== 3) return null;
-        
+
+        const base64Payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const paddedPayload = base64Payload.padEnd(
+            base64Payload.length + ((4 - (base64Payload.length % 4)) % 4),
+            '='
+        );
+
         const payload = JSON.parse(
-            Buffer.from(parts[1], 'base64').toString('utf-8')
+            Buffer.from(paddedPayload, 'base64').toString('utf-8')
         );
         
         if (payload.exp) {
@@ -147,7 +153,7 @@ export async function POST(request: Request) {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax',
-                maxAge: accessTokenExpiry || 60 * 5,
+                maxAge: accessTokenExpiry || 60 * 15,
                 path: '/',
             });
 
@@ -155,7 +161,7 @@ export async function POST(request: Request) {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax',
-                maxAge: refreshTokenExpiry || 60 * 60 * 24,
+                maxAge: refreshTokenExpiry || 60 * 60 * 24 * 30,
                 path: '/',
             });
         }

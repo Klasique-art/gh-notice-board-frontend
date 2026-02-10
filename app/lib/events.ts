@@ -16,8 +16,11 @@ export async function getEvents(filters: EventFilters = {}): Promise<PaginatedEv
         // Search
         if (filters.search) params.set('search', filters.search);
 
-        // Category (number ID)
-        if (filters.category) params.set('category', filters.category.toString());
+        // Category filters
+        if (filters.category) params.set('category', filters.category);
+        if (filters.category_slug) params.set('category_slug', filters.category_slug);
+        if (filters.tag) params.set('tag', filters.tag);
+        if (filters.organizer) params.set('organizer', filters.organizer);
 
         // Status (no 'all' - handle in UI)
         if (filters.status) params.set('status', filters.status);
@@ -28,13 +31,20 @@ export async function getEvents(filters: EventFilters = {}): Promise<PaginatedEv
         // Boolean filters
         if (filters.is_featured !== undefined) params.set('is_featured', filters.is_featured.toString());
         if (filters.is_free !== undefined) params.set('is_free', filters.is_free.toString());
+        if (filters.is_virtual !== undefined) params.set('is_virtual', filters.is_virtual.toString());
 
-        // Date filters (using backend field names)
-        if (filters.start_date__gte) params.set('start_date__gte', filters.start_date__gte);
-        if (filters.start_date__lte) params.set('start_date__lte', filters.start_date__lte);
+        // Date filters (backend keys)
+        if (filters.date_from || filters.start_date__gte) {
+            params.set('date_from', filters.date_from || filters.start_date__gte!);
+        }
+        if (filters.date_to || filters.start_date__lte) {
+            params.set('date_to', filters.date_to || filters.start_date__lte!);
+        }
 
         // Location
         if (filters.location) params.set('location', filters.location);
+        if (filters.city) params.set('city', filters.city);
+        if (filters.region) params.set('region', filters.region);
 
         // Ordering
         if (filters.ordering) params.set('ordering', filters.ordering);
@@ -107,7 +117,7 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
 export async function getUpcomingEvents(limit: number = 10): Promise<PaginatedEventsResponse> {
     const now = new Date().toISOString();
     return getEvents({
-        start_date__gte: now,
+        date_from: now,
         status: 'published',
         ordering: 'start_date',
         page_size: limit,
@@ -144,7 +154,7 @@ export async function getTrendingEvents(limit: number = 10): Promise<PaginatedEv
  * Fetch events by category ID
  */
 export async function getEventsByCategory(
-    categoryId: number,
+    categoryId: string,
     page: number = 1,
     pageSize: number = 10
 ): Promise<PaginatedEventsResponse> {
@@ -207,13 +217,22 @@ export async function getMyEvents(
         // Add other filters
         if (filters.search) params.set('search', filters.search);
         if (filters.status) params.set('status', filters.status);
-        if (filters.category) params.set('category', filters.category.toString());
+        if (filters.category) params.set('category', filters.category);
+        if (filters.category_slug) params.set('category_slug', filters.category_slug);
+        if (filters.tag) params.set('tag', filters.tag);
         if (filters.event_type) params.set('event_type', filters.event_type);
         if (filters.is_featured !== undefined) params.set('is_featured', filters.is_featured.toString());
         if (filters.is_free !== undefined) params.set('is_free', filters.is_free.toString());
-        if (filters.start_date__gte) params.set('start_date__gte', filters.start_date__gte);
-        if (filters.start_date__lte) params.set('start_date__lte', filters.start_date__lte);
+        if (filters.is_virtual !== undefined) params.set('is_virtual', filters.is_virtual.toString());
+        if (filters.date_from || filters.start_date__gte) {
+            params.set('date_from', filters.date_from || filters.start_date__gte!);
+        }
+        if (filters.date_to || filters.start_date__lte) {
+            params.set('date_to', filters.date_to || filters.start_date__lte!);
+        }
         if (filters.location) params.set('location', filters.location);
+        if (filters.city) params.set('city', filters.city);
+        if (filters.region) params.set('region', filters.region);
         if (filters.ordering) params.set('ordering', filters.ordering);
         if (filters.page) params.set('page', filters.page.toString());
         if (filters.page_size) params.set('page_size', filters.page_size.toString());

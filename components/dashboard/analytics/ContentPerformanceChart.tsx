@@ -27,18 +27,18 @@ const ContentPerformanceChart = ({
     const radius = 70;
     const innerRadius = 45;
 
-    let currentAngle = -90; // Start from top
-
-    const segments = data.map((item, index) => {
-        const percentage = (item.total_views / totalViews) * 100;
+    const segments = data.reduce<
+        Array<ContentPerformance & { path: string; color: string; percentage: number }>
+    >((acc, item, index) => {
+        const percentage = totalViews > 0 ? (item.total_views / totalViews) * 100 : 0;
         const angle = (percentage / 100) * 360;
-        const startAngle = currentAngle;
-        const endAngle = currentAngle + angle;
+        const priorAngle = acc
+            .slice(0, index)
+            .reduce((sum, segment) => sum + (segment.percentage / 100) * 360, -90);
+        const resolvedStartAngle = index === 0 ? -90 : priorAngle;
+        const endAngle = resolvedStartAngle + angle;
 
-        currentAngle = endAngle;
-
-        // Calculate path for donut segment
-        const startRadians = (startAngle * Math.PI) / 180;
+        const startRadians = (resolvedStartAngle * Math.PI) / 180;
         const endRadians = (endAngle * Math.PI) / 180;
 
         const outerStartX = centerX + radius * Math.cos(startRadians);
@@ -61,13 +61,14 @@ const ContentPerformanceChart = ({
       Z
     `;
 
-        return {
+        acc.push({
             ...item,
             path,
             color: colors[index % colors.length],
             percentage,
-        };
-    });
+        });
+        return acc;
+    }, []);
 
     return (
         <div className="bg-white rounded-xl border-2 border-slate-200 p-6 shadow-md">

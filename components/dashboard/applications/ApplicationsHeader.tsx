@@ -1,5 +1,4 @@
-import { Briefcase, Plus } from "lucide-react";
-import { AppButton } from "@/components";
+import { Briefcase } from "lucide-react";
 
 interface ApplicationsHeaderProps {
     totalCount: number;
@@ -26,13 +25,6 @@ const ApplicationsHeader = ({ totalCount }: ApplicationsHeaderProps) => {
                 </div>
             </div>
 
-            <AppButton
-                url="/dashboard/applications/create"
-                title="List a Job"
-                icon={<Plus className="w-5 h-5" />}
-                variant="primary"
-                size="md"
-            />
         </div>
     );
 };

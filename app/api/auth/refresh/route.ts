@@ -11,8 +11,14 @@ function getTokenExpiration(token: string): number | null {
         const parts = token.split('.');
         if (parts.length !== 3) return null;
 
+        const base64Payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const paddedPayload = base64Payload.padEnd(
+            base64Payload.length + ((4 - (base64Payload.length % 4)) % 4),
+            '='
+        );
+
         const payload = JSON.parse(
-            Buffer.from(parts[1], 'base64').toString('utf-8')
+            Buffer.from(paddedPayload, 'base64').toString('utf-8')
         );
 
         if (payload.exp) {
@@ -75,7 +81,7 @@ export async function POST() {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: accessTokenExpiry || 60 * 5, // Use actual expiry or default 5 minutes
+            maxAge: accessTokenExpiry || 60 * 15, // Use actual expiry or default 15 minutes
             path: '/',
         });
 
@@ -88,7 +94,7 @@ export async function POST() {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax',
-                maxAge: refreshTokenExpiry || 60 * 60 * 24, // Use actual expiry or default 1 day
+                maxAge: refreshTokenExpiry || 60 * 60 * 24 * 30, // Use actual expiry or default 30 days
                 path: '/',
             });
         }

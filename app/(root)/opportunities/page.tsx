@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { OpportunityHero, OpportunityPageContent } from "@/components";
 
 import { getOpportunities } from "@/app/lib/opportunities";
+import { OpportunityType } from "@/types/opportunities.types";
 
 // SEO Metadata
 export const metadata: Metadata = {
@@ -36,13 +37,64 @@ export const metadata: Metadata = {
   },
 };
 
+type Props = {
+  searchParams: Promise<{
+    search?: string;
+    opportunity_type?: string;
+    type?: string;
+    category__slug?: string;
+    category?: string;
+    is_remote?: string;
+    is_diaspora?: string;
+    is_featured?: string;
+    ordering?: string;
+    page?: string;
+  }>;
+};
+
+function parseCsvParam(value?: string): string[] | undefined {
+  if (!value) return undefined;
+  const items = value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return items.length > 0 ? items : undefined;
+}
+
+function parseBooleanParam(value?: string): boolean | undefined {
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return undefined;
+}
+
 // Server Component - Fetches data and prepares props
-const OpportunitiesPage = async () => {
-  // Fetch published opportunities
-  const opportunitiesData = await getOpportunities({
-    status: 'published',
-    page: 1
-  });
+const OpportunitiesPage = async ({ searchParams }: Props) => {
+  const params = await searchParams;
+  const page = Number.parseInt(params.page || "1", 10);
+  let opportunitiesData;
+
+  try {
+    // Fetch published opportunities
+    opportunitiesData = await getOpportunities({
+      search: params.search || undefined,
+      opportunity_type: parseCsvParam(params.opportunity_type || params.type) as OpportunityType[] | undefined,
+      category__slug: parseCsvParam(params.category__slug || params.category),
+      is_remote: parseBooleanParam(params.is_remote),
+      is_diaspora: parseBooleanParam(params.is_diaspora),
+      is_featured: parseBooleanParam(params.is_featured),
+      ordering: params.ordering || "-published_at",
+      status: "published",
+      page: Number.isNaN(page) ? 1 : page,
+    });
+  } catch (error) {
+    console.error("Failed to load opportunities page:", error);
+    opportunitiesData = {
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    };
+  }
 
   const opportunities = opportunitiesData.results || [];
 

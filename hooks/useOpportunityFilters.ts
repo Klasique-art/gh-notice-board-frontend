@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export interface OpportunityFiltersState {
@@ -25,8 +25,10 @@ export const useOpportunityFilters = () => {
 
     // Parse initial filters from URL
     const parseInitialFilters = useCallback((): OpportunityFiltersState => {
-        const typeParam = searchParams.get("opportunity_type");
-        const categoryParam = searchParams.get("category__slug");
+        const typeParam =
+            searchParams.get("opportunity_type") || searchParams.get("type");
+        const categoryParam =
+            searchParams.get("category__slug") || searchParams.get("category");
 
         return {
             search: searchParams.get("search") || "",

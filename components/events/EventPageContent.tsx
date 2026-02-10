@@ -44,8 +44,8 @@ const EventPageContent = ({
                 if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
                 if (filters.event_type.length > 0) params.set('event_type', filters.event_type[0]);
                 if (filters.is_featured) params.set('is_featured', 'true');
-                if (filters.date_from) params.set('start_date_from', filters.date_from);
-                if (filters.date_to) params.set('start_date_to', filters.date_to);
+                if (filters.date_from) params.set('date_from', filters.date_from);
+                if (filters.date_to) params.set('date_to', filters.date_to);
                 params.set('ordering', sort);
                 params.set('page', '1');
 
@@ -86,8 +86,8 @@ const EventPageContent = ({
             if (filters.category.length > 0) params.set('category_slug', filters.category[0]);
             if (filters.event_type.length > 0) params.set('event_type', filters.event_type[0]);
             if (filters.is_featured) params.set('is_featured', 'true');
-            if (filters.date_from) params.set('start_date_from', filters.date_from);
-            if (filters.date_to) params.set('start_date_to', filters.date_to);
+            if (filters.date_from) params.set('date_from', filters.date_from);
+            if (filters.date_to) params.set('date_to', filters.date_to);
             params.set('ordering', sort);
             params.set('page', nextPage.toString());
 

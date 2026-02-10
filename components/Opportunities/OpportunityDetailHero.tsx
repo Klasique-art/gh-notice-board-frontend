@@ -66,7 +66,7 @@ const OpportunityDetailHero = ({ opportunity }: OpportunityDetailHeroProps) => {
                                 {/* Category Badge */}
                                 {opportunity.category && (
                                     <Link
-                                        href={`/opportunities?category=${opportunity.category.slug}`}
+                                        href={`/opportunities?category__slug=${opportunity.category.slug}`}
                                         className="px-3 py-1.5 rounded-lg text-white font-bold small-text transition-all duration-300 hover:scale-105"
                                         style={{ backgroundColor: opportunity.category.color }}
                                     >

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, MapPin, Users, ArrowRight, Video } from "lucide-react";
 
-import {Section} from "@/components";
+import { Section } from "@/components";
 import { Event } from "@/types/events.types";
 
 interface UpcomingEventsSectionProps {
@@ -10,6 +10,11 @@ interface UpcomingEventsSectionProps {
 }
 
 const UpcomingEventsSection = ({ events }: UpcomingEventsSectionProps) => {
+    const parsePrice = (value: string) => {
+        const parsed = Number.parseFloat(value);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    };
+
     return (
         <Section
             title="Upcoming Events"
@@ -72,19 +77,19 @@ const UpcomingEventsSection = ({ events }: UpcomingEventsSectionProps) => {
                                 <div className="flex items-center gap-2 text-slate-600 small-text">
                                     <Users className="w-3 h-3 shrink-0" />
                                     <span>
-                                        {event.registered_count} / {event.max_attendees || "∞"} registered
+                                        {event.registered_count} / {event.max_attendees || "8"} registered
                                     </span>
                                 </div>
                             </div>
 
                             {/* Price */}
-                            {event.price > 0 ? (
+                            {parsePrice(event.price) > 0 ? (
                                 <div className="mt-3 pt-3 border-t border-slate-200">
                                     <span className="normal-text font-bold text-primary">
                                         {new Intl.NumberFormat("en-GH", {
                                             style: "currency",
-                                            currency: event.currency,
-                                        }).format(event.price)}
+                                            currency: "GHS",
+                                        }).format(parsePrice(event.price))}
                                     </span>
                                 </div>
                             ) : (

@@ -4,10 +4,9 @@ import { SettingsContent } from "@/components";
 export const metadata: Metadata = {
     title: "Settings | Ghana Notice Board",
     description:
-        "Manage your account settings, notifications, security, and privacy preferences.",
+        "Manage your account settings, security, and privacy preferences.",
     keywords: [
         "account settings",
-        "notifications",
         "security",
         "privacy",
         "Ghana",

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Shield, Bell, Lock, ChevronRight } from "lucide-react";
+import { Shield, Lock, ChevronRight } from "lucide-react";
 
 const SettingsNavigationCards = () => {
     const settingsSections = [
@@ -10,14 +10,6 @@ const SettingsNavigationCards = () => {
             href: "/dashboard/settings/security",
             iconBg: "bg-purple-500/10",
             iconColor: "text-purple-600",
-        },
-        {
-            title: "Notifications",
-            description: "Control email and push notifications",
-            icon: Bell,
-            href: "/dashboard/settings/notifications",
-            iconBg: "bg-blue-500/10",
-            iconColor: "text-blue-600",
         },
         {
             title: "Privacy & Data",

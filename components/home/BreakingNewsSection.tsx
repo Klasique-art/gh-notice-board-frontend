@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, TrendingUp, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight } from "lucide-react";
 
 import {Section} from "@/components";
 import { NewsArticle } from "@/types/news.types";
@@ -42,7 +42,7 @@ const BreakingNewsSection = ({ articles }: BreakingNewsSectionProps) => {
                         <div className="absolute bottom-0 left-0 right-0 p-6">
                             <div className="flex items-center gap-4 mb-3">
                                 <span className="px-3 py-1 rounded-full bg-secondary text-primary small-text font-semibold">
-                                    {featuredArticle.category.name}
+                                    {featuredArticle.category?.name || "General"}
                                 </span>
                                 <span className="flex items-center gap-1 text-white/80 small-text">
                                     <Clock className="w-3 h-3" />

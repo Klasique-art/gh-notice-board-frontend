@@ -1,7 +1,9 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { SavedItemsContent } from "@/components";
-import { mockSavedItemsResponse, mockBookmarkStats } from "@/data/mockBookmarks";
+import { getCurrentUser } from "@/app/lib/auth";
+import { getUserBookmarksWithStats } from "@/app/lib/bookmarks";
 
 export const metadata: Metadata = {
     title: "Saved Items | Ghana Notice Board",
@@ -20,17 +22,14 @@ const SavedItemsPage = async ({
 }: {
     searchParams: SearchParams;
 }) => {
-    // In production: Fetch user's bookmarks from API
-    // const user = await getCurrentUser();
-    // if (!user) redirect("/login");
+    await searchParams;
 
-    // const params = await searchParams;
-    // const bookmarks = await fetchMyBookmarks(params);
+    const user = await getCurrentUser();
+    if (!user) {
+        redirect("/login");
+    }
 
-    const bookmarks = mockSavedItemsResponse;
-    const stats = mockBookmarkStats;
-
-    // console.log("SavedItemsPage bookmarks:", bookmarks);
+    const { bookmarks, stats } = await getUserBookmarksWithStats();
 
     return (
         <main className="dash-page">

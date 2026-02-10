@@ -1,30 +1,45 @@
 import { Globe, Users, Calendar, TrendingUp } from "lucide-react";
 import { Section } from "@/components";
 
-const DiasporaHero = () => {
-    const stats = [
+type DiasporaHeroStats = {
+    activePosts: number;
+    featuredPosts: number;
+    urgentUpdates: number;
+    eventPosts: number;
+};
+
+type DiasporaHeroProps = {
+    stats: DiasporaHeroStats;
+};
+
+const DiasporaHero = ({ stats }: DiasporaHeroProps) => {
+    const formatStat = (value: number): string => {
+        return new Intl.NumberFormat("en-US").format(value);
+    };
+
+    const statItems = [
         {
             icon: <Globe className="w-6 h-6" />,
             label: "Active Posts",
-            value: "1,234",
+            value: formatStat(stats.activePosts),
             color: "from-primary to-primary-100",
         },
         {
             icon: <Users className="w-6 h-6" />,
-            label: "Communities",
-            value: "89",
+            label: "Featured Posts",
+            value: formatStat(stats.featuredPosts),
             color: "from-secondary to-secondary/80",
         },
         {
             icon: <Calendar className="w-6 h-6" />,
-            label: "Upcoming Events",
-            value: "45",
+            label: "Urgent Updates",
+            value: formatStat(stats.urgentUpdates),
             color: "from-accent to-accent-100",
         },
         {
             icon: <TrendingUp className="w-6 h-6" />,
-            label: "Investments",
-            value: "67",
+            label: "Event Posts",
+            value: formatStat(stats.eventPosts),
             color: "from-primary-100 to-secondary",
         },
     ];
@@ -51,7 +66,7 @@ const DiasporaHero = () => {
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 pt-8">
-                        {stats.map((stat, index) => (
+                        {statItems.map((stat, index) => (
                             <div
                                 key={index}
                                 className={`bg-linear-to-br ${stat.color} rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1`}

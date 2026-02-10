@@ -36,14 +36,26 @@ export const metadata: Metadata = {
 };
 
 const DiasporaPage = async () => {
-  // Fetch initial diaspora posts
-  const diasporaData = await getDiasporaPosts({ page: 1 });
+  // Fetch initial posts and backend-driven hero stats
+  const [diasporaData, featuredData, urgentData, eventPostsData] = await Promise.all([
+    getDiasporaPosts({ page: 1 }),
+    getDiasporaPosts({ is_featured: true, page: 1 }),
+    getDiasporaPosts({ is_urgent: true, page: 1 }),
+    getDiasporaPosts({ content_type: "event", page: 1 }),
+  ]);
+
   const posts = diasporaData.results || [];
+  const heroStats = {
+    activePosts: diasporaData.count,
+    featuredPosts: featuredData.count,
+    urgentUpdates: urgentData.count,
+    eventPosts: eventPostsData.count,
+  };
 
   return (
     <main>
       {/* Hero Section */}
-      <DiasporaHero />
+      <DiasporaHero stats={heroStats} />
 
       {/* Content Section */}
       <DiasporaPageContent
@@ -56,3 +68,6 @@ const DiasporaPage = async () => {
 };
 
 export default DiasporaPage;
+
+
+

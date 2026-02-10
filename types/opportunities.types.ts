@@ -234,8 +234,9 @@ export type PaginatedOpportunitiesResponse = {
 export type OpportunityFilters = {
     search?: string;
     opportunity_type?: OpportunityType | OpportunityType[];
-    category?: string | string[]; // slug
-    category_slug?: string | string[];
+    category?: string | string[]; // legacy
+    category_slug?: string | string[]; // legacy
+    category__slug?: string | string[];
     is_featured?: boolean;
     is_remote?: boolean;
     is_diaspora?: boolean;

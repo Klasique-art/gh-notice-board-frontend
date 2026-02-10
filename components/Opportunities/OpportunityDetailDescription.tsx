@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Opportunity } from "@/types/opportunities.types";
+import { OpportunityDetail } from "@/types/opportunities.types";
 
 interface OpportunityDetailDescriptionProps {
-    opportunity: Opportunity;
+    opportunity: OpportunityDetail;
 }
 
 const OpportunityDetailDescription = ({
     opportunity,
 }: OpportunityDetailDescriptionProps) => {
-    // In production, OpportunityDetail would have a 'description' field
-    // For now, we'll use the summary as a placeholder
-    const description = opportunity.summary;
+    const description = opportunity.description || opportunity.summary;
+    const organizationDescription = opportunity.organization_description;
+    const benefits = opportunity.benefits;
 
     return (
         <motion.article
@@ -32,41 +32,56 @@ const OpportunityDetailDescription = ({
 
                 {/* Description Content */}
                 <div className="prose prose-slate max-w-none">
-                    {/* 
-                        In production, this would be rendered as rich HTML from the backend
-                        OpportunityDetail.description field
-                    */}
                     <p className="normal-text text-slate-700 leading-relaxed">
                         {description}
                     </p>
 
-                    {/* Mock additional content */}
-                    <div className="mt-6 space-y-4">
-                        <p className="normal-text text-slate-700 leading-relaxed">
-                            This is an exciting opportunity to join {opportunity.organization_name}{" "}
-                            and contribute to meaningful work in {opportunity.city}, {opportunity.region}.
-                        </p>
+                    {(organizationDescription || benefits || opportunity.is_remote || opportunity.is_diaspora) && (
+                        <div className="mt-6 space-y-4">
+                            {organizationDescription && (
+                                <div>
+                                    <h3 className="big-text-5 font-bold text-slate-900 mb-2">
+                                        About the Organization
+                                    </h3>
+                                    <p className="normal-text text-slate-700 leading-relaxed">
+                                        {organizationDescription}
+                                    </p>
+                                </div>
+                            )}
 
-                        <p className="normal-text text-slate-700 leading-relaxed">
-                            We are looking for talented individuals who are passionate about making
-                            a difference and ready to take on new challenges in a dynamic environment.
-                        </p>
+                            {benefits && (
+                                <div>
+                                    <h3 className="big-text-5 font-bold text-slate-900 mb-2">
+                                        Benefits
+                                    </h3>
+                                    <p className="normal-text text-slate-700 leading-relaxed">
+                                        {benefits}
+                                    </p>
+                                </div>
+                            )}
 
-                        {opportunity.is_remote && (
+                            {opportunity.is_remote && (
+                                <p className="normal-text text-slate-700 leading-relaxed">
+                                    Remote work flexibility is available for this opportunity.
+                                </p>
+                            )}
+
+                            {opportunity.is_diaspora && (
+                                <p className="normal-text text-slate-700 leading-relaxed">
+                                    This opportunity is designed for members of the Ghanaian diaspora.
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {!organizationDescription && !benefits && !opportunity.is_remote && !opportunity.is_diaspora && (
+                        <div className="mt-6">
                             <p className="normal-text text-slate-700 leading-relaxed">
-                                This position offers remote work flexibility, allowing you to work from
-                                anywhere while collaborating with our team.
+                                This opportunity is hosted by {opportunity.organization_name} in{" "}
+                                {opportunity.city}, {opportunity.region}.
                             </p>
-                        )}
-
-                        {opportunity.is_diaspora && (
-                            <p className="normal-text text-slate-700 leading-relaxed">
-                                This opportunity is specifically designed for members of the Ghanaian
-                                diaspora who want to contribute their skills and experience to Ghana's
-                                development.
-                            </p>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Category & Type */}

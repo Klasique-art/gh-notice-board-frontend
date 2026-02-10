@@ -113,6 +113,8 @@ export { default as SettingsContent } from './dashboard/settings/SettingsContent
 export { default as SettingsNavigationCards } from './dashboard/settings/SettingsNavigationCards';
 export { default as SecuritySettingsHeader } from './dashboard/settings/SecuritySettingsHeader';
 export { default as SecuritySettingsContent } from './dashboard/settings/SecuritySettingsContent';
+export { default as PrivacySettingsHeader } from './dashboard/settings/PrivacySettingsHeader';
+export { default as PrivacySettingsContent } from './dashboard/settings/PrivacySettingsContent';
 export { default as SecurityInfo } from './dashboard/settings/SecurityInfo';
 export { default as ChangePasswordForm } from './dashboard/settings/ChangePasswordForm';
 export { default as ChangeEmailForm } from './dashboard/settings/ChangeEmailForm';

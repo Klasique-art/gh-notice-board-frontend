@@ -58,9 +58,9 @@ const EventDetailHero = ({ event }: EventDetailHeroProps) => {
     };
 
     return (
-        <section className="relative w-full bg-primary">
+        <section className="relative w-full bg-primary py-0! px-0!">
             {/* Featured Image with Overlay */}
-            <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh]">
+            <div className="relative w-full h-screen min-h-140">
                 <Image
                     src={event.featured_image ?? placeholderImage}
                     alt={event.title}
@@ -74,7 +74,7 @@ const EventDetailHero = ({ event }: EventDetailHeroProps) => {
 
                 {/* Content Overlay */}
                 <div className="absolute inset-0 flex items-end">
-                    <div className="inner-wrapper pb-8 md:pb-12">
+                    <div className="inner-wrapper px-2 xs:px-4 pb-8 md:pb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -84,13 +84,19 @@ const EventDetailHero = ({ event }: EventDetailHeroProps) => {
                             {/* Badges */}
                             <div className="flex flex-wrap items-center gap-3">
                                 {/* Category Badge */}
-                                <Link
-                                    href={`/events?category=${event.category.slug}`}
-                                    className="px-3 py-1.5 rounded-lg text-white font-bold small-text transition-all duration-300 hover:scale-105"
-                                    style={{ backgroundColor: event.category.color }}
-                                >
-                                    {event.category.name}
-                                </Link>
+                                {event.category ? (
+                                    <Link
+                                        href={`/events?category=${event.category.slug}`}
+                                        className="px-3 py-1.5 rounded-lg text-white font-bold small-text transition-all duration-300 hover:scale-105"
+                                        style={{ backgroundColor: event.category.color }}
+                                    >
+                                        {event.category.name}
+                                    </Link>
+                                ) : (
+                                    <span className="px-3 py-1.5 rounded-lg bg-white/20 backdrop-blur-sm text-white font-bold small-text">
+                                        Events
+                                    </span>
+                                )}
 
                                 {/* Event Type Badge */}
                                 <span className="px-3 py-1.5 rounded-lg bg-white/20 backdrop-blur-sm text-white font-bold small-text flex items-center gap-1.5">

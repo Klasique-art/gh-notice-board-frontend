@@ -5,16 +5,23 @@ import { Bell, Mail, Smartphone, Globe, Eye, MessageSquare } from "lucide-react"
 import { CurrentUser } from "@/types/general.types";
 
 interface ProfileNotificationSettingsProps {
-    settings: CurrentUser["profile"];
+    settings?: CurrentUser["profile"];
 }
 
 const ProfileNotificationSettings = ({ settings }: ProfileNotificationSettingsProps) => {
+    const safeSettings = {
+        show_email: settings?.show_email ?? false,
+        show_location: settings?.show_location ?? true,
+        allow_messages: settings?.allow_messages ?? true,
+        theme: settings?.theme ?? ("auto" as const),
+    };
+
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [pushNotifications, setPushNotifications] = useState(true);
-    const [showEmail, setShowEmail] = useState(settings.show_email);
-    const [showLocation, setShowLocation] = useState(settings.show_location);
-    const [allowMessages, setAllowMessages] = useState(settings.allow_messages);
-    const [theme, setTheme] = useState(settings.theme);
+    const [showEmail, setShowEmail] = useState(safeSettings.show_email);
+    const [showLocation, setShowLocation] = useState(safeSettings.show_location);
+    const [allowMessages, setAllowMessages] = useState(safeSettings.allow_messages);
+    const [theme] = useState(safeSettings.theme);
 
     const handleToggle = (type: string, value: boolean) => {
         console.log(`Toggling ${type}:`, value);
@@ -72,11 +79,7 @@ const ProfileNotificationSettings = ({ settings }: ProfileNotificationSettingsPr
         },
     ];
 
-    const themeOptions = [
-        { value: "light", label: "Light", icon: "☀️" },
-        { value: "dark", label: "Dark", icon: "🌙" },
-        { value: "auto", label: "Auto", icon: "⚙️" },
-    ];
+    void theme;
 
     return (
         <div className="bg-white rounded-xl border-2 border-slate-200 p-4 shadow-md">

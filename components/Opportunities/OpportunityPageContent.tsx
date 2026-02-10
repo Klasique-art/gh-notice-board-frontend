@@ -7,7 +7,7 @@ import {
     OpportunitySortTabs,
     OpportunityGrid,
 } from "@/components";
-import { Opportunity } from "@/types/opportunities.types";
+import { Opportunity, OpportunityType } from "@/types/opportunities.types";
 import { useOpportunityFilters } from "@/hooks/useOpportunityFilters";
 import { getOpportunities } from "@/app/lib/opportunities";
 
@@ -50,8 +50,8 @@ const OpportunityPageContent = ({
 
             const response = await getOpportunities({
                 ...filters,
-                opportunity_type: filters.opportunity_type as any,
-                category: filters.category as string[],
+                opportunity_type: filters.opportunity_type as OpportunityType[],
+                category__slug: filters.category as string[],
                 ordering: sort,
                 page: pageToFetch,
             });

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { EventCategory } from '@/types/events.types';
 import { AppFormField } from '@/components';
-import { BASE_URL } from '@/data/constants';
 
 const EventCategorySection = () => {
     const [categories, setCategories] = useState<EventCategory[]>([]);
@@ -13,14 +12,20 @@ const EventCategorySection = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/categories/`);
+                const response = await fetch('/api/categories', {
+                    cache: 'no-store',
+                });
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch categories');
                 }
 
                 const data = await response.json();
-                setCategories(data.results || []);
+                const rawCategories = Array.isArray(data) ? data : data.results || [];
+                const activeCategories = rawCategories.filter(
+                    (cat: EventCategory) => cat.is_active !== false
+                );
+                setCategories(activeCategories);
             } catch (err) {
                 console.error('Error fetching categories:', err);
                 setError('Failed to load categories');

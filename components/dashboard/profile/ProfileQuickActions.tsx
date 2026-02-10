@@ -24,7 +24,7 @@ const ProfileQuickActions = () => {
             icon: Briefcase,
             label: "Saved Opportunities",
             description: "Bookmarked jobs & scholarships",
-            href: "/dashboard/saved",
+            href: "/dashboard/saved-items",
             color: "text-accent",
             bgColor: "bg-accent/10",
         },

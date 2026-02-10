@@ -24,6 +24,7 @@ const AnalyticsTimeSeriesChart = ({
 
     // Calculate max value for scaling
     const maxValue = Math.max(...data.map((d) => d[activeMetric]));
+    const safeMaxValue = maxValue > 0 ? maxValue : 1;
     const chartHeight = 200;
     const chartWidth = 600;
     const padding = 40;
@@ -37,7 +38,7 @@ const AnalyticsTimeSeriesChart = ({
             const y =
                 chartHeight -
                 padding -
-                (point[activeMetric] / maxValue) * (chartHeight - padding * 2);
+                (point[activeMetric] / safeMaxValue) * (chartHeight - padding * 2);
             return `${x},${y}`;
         });
 
@@ -113,7 +114,7 @@ const AnalyticsTimeSeriesChart = ({
                                     fontSize="12"
                                     fill="#64748B"
                                 >
-                                    {Math.round((maxValue * (4 - i)) / 4)}
+                                    {Math.round((safeMaxValue * (4 - i)) / 4)}
                                 </text>
                             </g>
                         );
@@ -150,7 +151,7 @@ const AnalyticsTimeSeriesChart = ({
                         const y =
                             chartHeight -
                             padding -
-                            (point[activeMetric] / maxValue) * (chartHeight - padding * 2);
+                            (point[activeMetric] / safeMaxValue) * (chartHeight - padding * 2);
 
                         return (
                             <circle
