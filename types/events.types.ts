@@ -102,6 +102,7 @@ export type Event = {
     shares_count: number;
     bookmarks_count: number;  // ✅ Added
     comments_count: number;  // ✅ Added
+    user_bookmarked?: boolean;
     
     price: string; // Decimal as string
     currency?: string; // compatibility with legacy UI usage

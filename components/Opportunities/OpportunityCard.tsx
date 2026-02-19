@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -12,10 +13,14 @@ import {
     Eye,
     Globe,
     Zap,
+    Bookmark,
+    Loader2,
 } from "lucide-react";
 
 import { typeConfig } from "@/data/opportunityConfig";
 import { Opportunity } from "@/types/opportunities.types";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface OpportunityCardProps {
     opportunity: Opportunity;
@@ -23,6 +28,10 @@ interface OpportunityCardProps {
 }
 
 const OpportunityCard = ({ opportunity, index = 0 }: OpportunityCardProps) => {
+    const [isBookmarked, setIsBookmarked] = useState(opportunity.user_saved);
+    const [isBookmarkPending, setIsBookmarkPending] = useState(false);
+    const { showToast } = useToast();
+
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -54,6 +63,41 @@ const OpportunityCard = ({ opportunity, index = 0 }: OpportunityCardProps) => {
         ? opportunity.salary_range
         : null;
 
+    const handleBookmark = async () => {
+        if (isBookmarkPending) return;
+        const nextBookmarked = !isBookmarked;
+        setIsBookmarkPending(true);
+        setIsBookmarked(nextBookmarked);
+
+        try {
+            const payload = { type: "opportunity" as const, object_id: opportunity.id };
+            if (nextBookmarked) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This opportunity has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This opportunity has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsBookmarked(!nextBookmarked);
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsBookmarkPending(false);
+        }
+    };
+
     return (
         <motion.article
             variants={cardVariants}
@@ -61,6 +105,27 @@ const OpportunityCard = ({ opportunity, index = 0 }: OpportunityCardProps) => {
             animate="visible"
             className="group relative bg-white rounded-2xl border-2 border-slate-200 hover:border-primary/30 overflow-hidden transition-all duration-300 hover:shadow-2xl"
         >
+            <div className="absolute right-3 top-3 z-10">
+                <button
+                    type="button"
+                    onClick={handleBookmark}
+                    disabled={isBookmarkPending}
+                    className={`h-9 w-9 rounded-full border shadow-md flex items-center justify-center transition-colors ${
+                        isBookmarked
+                            ? "border-secondary bg-secondary/20 text-primary"
+                            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+                    }`}
+                    aria-label="Bookmark opportunity"
+                    aria-pressed={isBookmarked}
+                >
+                    {isBookmarkPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-secondary" : ""}`} />
+                    )}
+                </button>
+            </div>
+
             {/* linear Accent */}
             <div
                 className="absolute top-0 left-0 right-0 h-1.5"

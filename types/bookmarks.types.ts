@@ -14,14 +14,21 @@ export type BookmarkContentType =
     | "diasporapost"
     | "announcement";
 
+export type BookmarkInteractionType =
+    | "news"
+    | "event"
+    | "opportunity"
+    | "diaspora";
+
 // Base Bookmark (from BookmarkSerializer)
 export interface BaseBookmark {
     id: number;
-    user: number;
+    user: string | number;
     user_username: string;
     content_type: number; // ContentType ID
     content_type_name: BookmarkContentType;
-    object_id: number;
+    object_id: string | number;
+    type?: BookmarkInteractionType;
     created_at: string;
 }
 

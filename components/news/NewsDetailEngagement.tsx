@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Bookmark, Share2, MessageCircle } from "lucide-react";
+import { Heart, Bookmark, Loader2, Share2, MessageCircle } from "lucide-react";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
+import { useToast } from "@/components/ui/ToastProvider";
 import { NewsArticle } from "@/types/news.types";
 
 interface NewsDetailEngagementProps {
@@ -11,9 +13,11 @@ interface NewsDetailEngagementProps {
 
 const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
     const [isLiked, setIsLiked] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(article.user_bookmarked);
+    const [isBookmarkPending, setIsBookmarkPending] = useState(false);
     const [likesCount, setLikesCount] = useState(article.likes_count || 0);
     const [bookmarksCount, setBookmarksCount] = useState(article.bookmarks_count || 0);
+    const { showToast } = useToast();
 
     const handleLike = () => {
         // In production, call API to like article
@@ -21,10 +25,41 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
         setLikesCount((prev: number) => (isLiked ? prev - 1 : prev + 1));
     };
 
-    const handleBookmark = () => {
-        // In production, call API to bookmark article
-        setIsBookmarked(!isBookmarked);
-        setBookmarksCount((prev: number) => (isBookmarked ? prev - 1 : prev + 1));
+    const handleBookmark = async () => {
+        if (isBookmarkPending) return;
+        const nextBookmarked = !isBookmarked;
+        setIsBookmarkPending(true);
+        setIsBookmarked(nextBookmarked);
+        setBookmarksCount((prev: number) => (nextBookmarked ? prev + 1 : Math.max(0, prev - 1)));
+
+        try {
+            const payload = { type: "news" as const, object_id: article.id };
+            if (nextBookmarked) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This item has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This item has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsBookmarked(!nextBookmarked);
+            setBookmarksCount((prev: number) => (nextBookmarked ? Math.max(0, prev - 1) : prev + 1));
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsBookmarkPending(false);
+        }
     };
 
     const handleShare = () => {
@@ -87,15 +122,21 @@ const NewsDetailEngagement = ({ article }: NewsDetailEngagementProps) => {
                     {/* Bookmark Button */}
                     <button
                         onClick={handleBookmark}
+                        disabled={isBookmarkPending}
                         className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${isBookmarked
                             ? "bg-secondary/20 text-primary border-2 border-secondary"
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200 border-2 border-transparent"
                             }`}
                         aria-label="Bookmark article"
+                        aria-pressed={isBookmarked}
                     >
-                        <Bookmark
-                            className={`w-5 h-5 ${isBookmarked ? "fill-secondary" : ""}`}
-                        />
+                        {isBookmarkPending ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Bookmark
+                                className={`w-5 h-5 ${isBookmarked ? "fill-secondary" : ""}`}
+                            />
+                        )}
                         <span className="hidden sm:inline">
                             {isBookmarked ? "Saved" : "Save"}
                         </span>

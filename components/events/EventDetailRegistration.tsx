@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Heart, Share2, Bookmark, CheckCircle } from "lucide-react";
+import { UserPlus, Heart, Share2, Bookmark, CheckCircle, Loader2 } from "lucide-react";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
+import { useToast } from "@/components/ui/ToastProvider";
 import { Event } from "@/types/events.types";
 
 interface EventDetailRegistrationProps {
@@ -12,8 +14,10 @@ interface EventDetailRegistrationProps {
 const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
     const [isRegistered, setIsRegistered] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(Boolean(event.user_bookmarked));
+    const [isBookmarkPending, setIsBookmarkPending] = useState(false);
     const [likesCount, setLikesCount] = useState(event.likes_count);
+    const { showToast } = useToast();
 
     const isFree = parseFloat(event.price) === 0;
     const spotsLeft = event.max_attendees
@@ -31,8 +35,39 @@ const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
         setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
     };
 
-    const handleBookmark = () => {
-        setIsBookmarked(!isBookmarked);
+    const handleBookmark = async () => {
+        if (isBookmarkPending) return;
+        const nextBookmarked = !isBookmarked;
+        setIsBookmarkPending(true);
+        setIsBookmarked(nextBookmarked);
+
+        try {
+            const payload = { type: "event" as const, object_id: event.id };
+            if (nextBookmarked) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This event has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This event has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsBookmarked(!nextBookmarked);
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsBookmarkPending(false);
+        }
     };
 
     const handleShare = () => {
@@ -124,14 +159,20 @@ const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
                         {/* Bookmark Button */}
                         <button
                             onClick={handleBookmark}
+                            disabled={isBookmarkPending}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${
                                 isBookmarked
                                     ? "bg-secondary/20 text-primary border-2 border-secondary"
                                     : "bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-200"
                             }`}
                             aria-label="Bookmark event"
+                            aria-pressed={isBookmarked}
                         >
-                            <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-secondary" : ""}`} />
+                            {isBookmarkPending ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-secondary" : ""}`} />
+                            )}
                         </button>
 
                         {/* Share Button */}

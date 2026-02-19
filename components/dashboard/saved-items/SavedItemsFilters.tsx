@@ -15,9 +15,9 @@ const SavedItemsFilters = ({ stats }: SavedItemsFiltersProps) => {
     const filters = [
         { value: "all", label: "All Items", count: stats.total },
         { value: "event", label: "Events", count: stats.events },
-        { value: "newsarticle", label: "News", count: stats.news },
+        { value: "news", label: "News", count: stats.news },
         { value: "opportunity", label: "Jobs", count: stats.opportunities },
-        { value: "diasporapost", label: "Diaspora", count: stats.diaspora },
+        { value: "diaspora", label: "Diaspora", count: stats.diaspora },
         { value: "announcement", label: "Announcements", count: stats.announcements },
     ];
 

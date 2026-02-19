@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -18,7 +19,6 @@ import {
     Globe,
     Newspaper,
     Award,
-    Briefcase,
     Users,
     Landmark,
     TrendingUp,
@@ -26,8 +26,12 @@ import {
     Home,
     Lightbulb,
     Handshake,
+    Bookmark,
+    Loader2,
 } from "lucide-react";
 import { DiasporaPost } from "@/types/diaspora.types";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface DiasporaCardProps {
     post: DiasporaPost;
@@ -35,6 +39,10 @@ interface DiasporaCardProps {
 }
 
 const DiasporaCard = ({ post, index = 0 }: DiasporaCardProps) => {
+    const [isBookmarked, setIsBookmarked] = useState(post.user_bookmarked);
+    const [isBookmarkPending, setIsBookmarkPending] = useState(false);
+    const { showToast } = useToast();
+
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -139,6 +147,41 @@ const DiasporaCard = ({ post, index = 0 }: DiasporaCardProps) => {
 
     const eventDaysUntil = calculateDaysUntil(post.event_date);
     const deadlineDaysUntil = calculateDaysUntil(post.opportunity_deadline);
+
+    const handleBookmark = async () => {
+        if (isBookmarkPending) return;
+        const nextBookmarked = !isBookmarked;
+        setIsBookmarkPending(true);
+        setIsBookmarked(nextBookmarked);
+
+        try {
+            const payload = { type: "diaspora" as const, object_id: post.id };
+            if (nextBookmarked) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This item has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This item has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsBookmarked(!nextBookmarked);
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsBookmarkPending(false);
+        }
+    };
 
     return (
         <motion.article
@@ -358,13 +401,32 @@ const DiasporaCard = ({ post, index = 0 }: DiasporaCardProps) => {
                         </span>
                     </div>
 
-                    {/* CTA Button */}
-                    <Link
-                        href={`/diaspora/${post.slug}`}
-                        className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-100 text-white font-semibold normal-text-2 transition-all shadow-md hover:shadow-lg"
-                    >
-                        Read More
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={handleBookmark}
+                            disabled={isBookmarkPending}
+                            className={`px-3 py-2 rounded-lg border-2 transition-all ${
+                                isBookmarked
+                                    ? "border-secondary bg-secondary/20 text-primary"
+                                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                            }`}
+                            aria-label="Bookmark diaspora item"
+                            aria-pressed={isBookmarked}
+                        >
+                            {isBookmarkPending ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-secondary" : ""}`} />
+                            )}
+                        </button>
+                        <Link
+                            href={`/diaspora/${post.slug}`}
+                            className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-100 text-white font-semibold normal-text-2 transition-all shadow-md hover:shadow-lg"
+                        >
+                            Read More
+                        </Link>
+                    </div>
                 </div>
             </div>
 

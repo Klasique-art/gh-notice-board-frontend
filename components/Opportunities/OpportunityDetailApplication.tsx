@@ -15,6 +15,8 @@ import {
     X,
 } from "lucide-react";
 import { OpportunityDetail } from "@/types/opportunities.types";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface OpportunityDetailApplicationProps {
     opportunity: OpportunityDetail;
@@ -60,6 +62,7 @@ const OpportunityDetailApplication = ({
     const [hasApplied, setHasApplied] = useState(opportunity.user_applied);
     const [isLiked, setIsLiked] = useState(opportunity.user_liked);
     const [isSaved, setIsSaved] = useState(opportunity.user_saved);
+    const [isSavePending, setIsSavePending] = useState(false);
     const [likesCount, setLikesCount] = useState(opportunity.likes_count);
     const [applicationsCount, setApplicationsCount] = useState(
         opportunity.applications_count
@@ -70,6 +73,7 @@ const OpportunityDetailApplication = ({
     const [formError, setFormError] = useState<string | null>(null);
     const [formSuccess, setFormSuccess] = useState<string | null>(null);
     const [formState, setFormState] = useState<ApplyFormState>(buildInitialFormState);
+    const { showToast } = useToast();
 
     const daysUntilDeadline = opportunity.days_until_deadline;
     const isUrgent = daysUntilDeadline !== null && daysUntilDeadline <= 7;
@@ -98,8 +102,39 @@ const OpportunityDetailApplication = ({
         setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
     };
 
-    const handleSave = () => {
-        setIsSaved(!isSaved);
+    const handleSave = async () => {
+        if (isSavePending) return;
+        const nextSaved = !isSaved;
+        setIsSavePending(true);
+        setIsSaved(nextSaved);
+
+        try {
+            const payload = { type: "opportunity" as const, object_id: opportunity.id };
+            if (nextSaved) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This opportunity has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This opportunity has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsSaved(!nextSaved);
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsSavePending(false);
+        }
     };
 
     const handleShare = () => {
@@ -311,14 +346,20 @@ const OpportunityDetailApplication = ({
 
                         <button
                             onClick={handleSave}
+                            disabled={isSavePending}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold small-text transition-all duration-300 hover:scale-105 ${
                                 isSaved
                                     ? "bg-secondary/20 text-primary border-2 border-secondary"
                                     : "bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-200"
                             }`}
                             aria-label="Save opportunity"
+                            aria-pressed={isSaved}
                         >
-                            <Bookmark className={`w-5 h-5 ${isSaved ? "fill-secondary" : ""}`} />
+                            {isSavePending ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Bookmark className={`w-5 h-5 ${isSaved ? "fill-secondary" : ""}`} />
+                            )}
                             <span className="hidden sm:inline">{isSaved ? "Saved" : "Save"}</span>
                         </button>
 

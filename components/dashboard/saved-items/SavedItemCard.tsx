@@ -1,3 +1,5 @@
+"use client";
+
 import { Bookmark } from "@/types/bookmarks.types";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,26 +16,27 @@ import {
     Bookmark as BookmarkIcon,
     X,
     Video,
-    DollarSign,
     MessageCircle,
+    Loader2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface SavedItemCardProps {
     bookmark: Bookmark;
+    onRemove: (bookmark: Bookmark) => Promise<void>;
+    isRemoving?: boolean;
 }
 
-const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
-    const { content_type_name, content_object, created_at } = bookmark;
+const SavedItemCard = ({ bookmark, onRemove, isRemoving = false }: SavedItemCardProps) => {
+    const { content_type_name, created_at } = bookmark;
 
     // Get card details based on content type
     const getCardDetails = () => {
         switch (content_type_name) {
             case "event": {
-                const event = content_object as any;
+                const event = bookmark.content_object;
                 return {
                     title: event.title,
-                    slug: event.slug,
                     link: `/events/${event.slug}`,
                     image: event.featured_image,
                     icon: event.event_type === "virtual" ? Video : event.event_type === "hybrid" ? Calendar : MapPin,
@@ -59,17 +62,16 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
                         </span>
                     ) : (
                         <span className="small-text text-slate-700 font-semibold">
-                            GHS {event.price.toLocaleString()}
+                            GHS {Number.parseFloat(event.price).toLocaleString()}
                         </span>
                     ),
                 };
             }
 
             case "newsarticle": {
-                const news = content_object as any;
+                const news = bookmark.content_object;
                 return {
                     title: news.title,
-                    slug: news.slug,
                     link: `/news/${news.slug}`,
                     image: news.featured_image,
                     icon: Newspaper,
@@ -98,7 +100,7 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
             }
 
             case "opportunity": {
-                const opp = content_object as any;
+                const opp = bookmark.content_object;
                 const deadline = opp.deadline
                     ? new Date(opp.deadline).toLocaleDateString("en-GB", {
                         day: "numeric",
@@ -107,7 +109,6 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
                     : null;
                 return {
                     title: opp.title,
-                    slug: opp.slug,
                     link: `/opportunities/${opp.slug}`,
                     image: opp.organization_logo,
                     icon: Briefcase,
@@ -133,10 +134,9 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
             }
 
             case "diasporapost": {
-                const diaspora = content_object as any;
+                const diaspora = bookmark.content_object;
                 return {
                     title: diaspora.title,
-                    slug: diaspora.slug,
                     link: `/diaspora/${diaspora.slug}`,
                     image: diaspora.featured_image,
                     icon: Globe,
@@ -161,8 +161,8 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
             }
 
             case "announcement": {
-                const announcement = content_object as any;
-                const priority = announcement.priority as "low" | "medium" | "high" | "critical"; // Fixed: explicit type
+                const announcement = bookmark.content_object;
+                const priority = announcement.priority;
                 const priorityColors: Record<"low" | "medium" | "high" | "critical", string> = {
                     low: "bg-slate-100 text-slate-700",
                     medium: "bg-blue-100 text-blue-700",
@@ -171,7 +171,6 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
                 };
                 return {
                     title: announcement.title,
-                    slug: announcement.slug,
                     link: `/announcements/${announcement.slug}`,
                     image: announcement.featured_image,
                     icon: Bell,
@@ -209,6 +208,10 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
     const Icon = details.icon;
     const MetaIcon = details.metaIcon;
 
+    const handleRemoveClick = async () => {
+        await onRemove(bookmark);
+    };
+
     return (
         <div className="bg-white rounded-xl border-2 border-slate-200 hover:border-primary hover:shadow-lg transition-all duration-300">
             {/* Header */}
@@ -222,10 +225,17 @@ const SavedItemCard = ({ bookmark }: SavedItemCardProps) => {
                     </span>
                 </div>
                 <button
+                    type="button"
+                    onClick={handleRemoveClick}
+                    disabled={isRemoving}
                     className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                     aria-label="Remove from saved items"
                 >
-                    <X className="w-4 h-4 text-slate-600" aria-hidden="true" />
+                    {isRemoving ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-slate-600" aria-hidden="true" />
+                    ) : (
+                        <X className="w-4 h-4 text-slate-600" aria-hidden="true" />
+                    )}
                 </button>
             </div>
 

@@ -1,13 +1,20 @@
 import { BASE_URL } from "@/data/constants";
 import { fetchWithAuth } from "@/app/lib/serverAuth";
-import { Bookmark, BookmarksResponse, BookmarkContentType, BookmarkStats } from "@/types/bookmarks.types";
+import {
+    Bookmark,
+    BookmarksResponse,
+    BookmarkContentType,
+    BookmarkInteractionType,
+    BookmarkStats,
+} from "@/types/bookmarks.types";
 
 type BackendBookmark = {
     id: number;
-    user: number;
+    user: string | number;
     user_username: string;
     content_type: number;
     content_type_name: BookmarkContentType;
+    type?: BookmarkInteractionType;
     object_id: string | number;
     created_at: string;
 };
@@ -191,4 +198,3 @@ export async function getUserBookmarksWithStats(): Promise<{
         return { bookmarks: empty, stats: buildStats([]) };
     }
 }
-

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito, Rhodium_Libre, Metrophobic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 import "./globals.css";
 import "@/styles/general.css";
 
@@ -259,8 +260,10 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} ${rhodiumLibre.variable} ${metrophobic.variable} antialiased`}
       >
-        <Analytics />
-        {children}
+        <ToastProvider>
+          <Analytics />
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

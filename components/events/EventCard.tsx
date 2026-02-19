@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -12,9 +13,12 @@ import {
     Bookmark,
     Video,
     Star,
+    Loader2,
 } from "lucide-react";
+import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
 import { Event } from "@/types/events.types";
 import { placeholderImage } from "@/data/constants";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface EventCardProps {
     event: Event;
@@ -22,6 +26,10 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, index = 0 }: EventCardProps) => {
+    const [isBookmarked, setIsBookmarked] = useState(Boolean(event.user_bookmarked));
+    const [isBookmarkPending, setIsBookmarkPending] = useState(false);
+    const { showToast } = useToast();
+
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -94,6 +102,41 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
         ? event.max_attendees - event.registered_count
         : null;
     const isAlmostFull = spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 20;
+
+    const handleBookmark = async () => {
+        if (isBookmarkPending) return;
+        const nextBookmarked = !isBookmarked;
+        setIsBookmarkPending(true);
+        setIsBookmarked(nextBookmarked);
+
+        try {
+            const payload = { type: "event" as const, object_id: event.id };
+            if (nextBookmarked) {
+                await addBookmark(payload);
+                showToast({
+                    title: "Saved",
+                    description: "This event has been added to your bookmarks.",
+                    tone: "success",
+                });
+            } else {
+                await removeBookmark(payload);
+                showToast({
+                    title: "Removed",
+                    description: "This event has been removed from your bookmarks.",
+                    tone: "info",
+                });
+            }
+        } catch (error) {
+            setIsBookmarked(!nextBookmarked);
+            showToast({
+                title: "Bookmark update failed",
+                description: error instanceof Error ? error.message : "Please try again.",
+                tone: "error",
+            });
+        } finally {
+            setIsBookmarkPending(false);
+        }
+    };
 
     return (
         <motion.article
@@ -291,11 +334,19 @@ const EventCard = ({ event, index = 0 }: EventCardProps) => {
             {/* Quick Actions (Hover) */}
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
                 <button
+                    type="button"
+                    onClick={handleBookmark}
+                    disabled={isBookmarkPending}
                     className="w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-colors"
                     title="Bookmark"
                     aria-label="Bookmark event"
+                    aria-pressed={isBookmarked}
                 >
-                    <Bookmark className="w-4 h-4" />
+                    {isBookmarkPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-secondary text-primary" : ""}`} />
+                    )}
                 </button>
             </div>
         </motion.article>

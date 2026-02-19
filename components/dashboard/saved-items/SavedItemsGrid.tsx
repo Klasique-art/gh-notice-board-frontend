@@ -6,9 +6,19 @@ import { SavedItemCard } from "@/components";
 
 interface SavedItemsGridProps {
     bookmarks: Bookmark[];
+    onRemove: (bookmark: Bookmark) => Promise<void>;
+    removingIds: Set<number>;
 }
 
-const SavedItemsGrid = ({ bookmarks }: SavedItemsGridProps) => {
+const filterTypeMap: Record<string, Bookmark["content_type_name"] | null> = {
+    news: "newsarticle",
+    event: "event",
+    opportunity: "opportunity",
+    diaspora: "diasporapost",
+    announcement: "announcement",
+};
+
+const SavedItemsGrid = ({ bookmarks, onRemove, removingIds }: SavedItemsGridProps) => {
     const searchParams = useSearchParams();
     const currentType = searchParams.get("type") || "all";
 
@@ -16,7 +26,7 @@ const SavedItemsGrid = ({ bookmarks }: SavedItemsGridProps) => {
     const filteredBookmarks =
         currentType === "all"
             ? bookmarks
-            : bookmarks.filter((b) => b.content_type_name === currentType);
+            : bookmarks.filter((b) => b.content_type_name === filterTypeMap[currentType]);
 
     if (filteredBookmarks.length === 0) {
         return (
@@ -31,7 +41,12 @@ const SavedItemsGrid = ({ bookmarks }: SavedItemsGridProps) => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredBookmarks.map((bookmark) => (
-                <SavedItemCard key={bookmark.id} bookmark={bookmark} />
+                <SavedItemCard
+                    key={bookmark.id}
+                    bookmark={bookmark}
+                    onRemove={onRemove}
+                    isRemoving={removingIds.has(bookmark.id)}
+                />
             ))}
         </div>
     );
