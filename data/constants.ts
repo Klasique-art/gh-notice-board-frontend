@@ -4,7 +4,7 @@ export const placeholderImage = "https://images.unsplash.com/photo-1559551538-96
 
 export const BASE_URL = process.env.NODE_ENV === "production"
         ? "https://ghnoticeboard.pythonanywhere.com/api"
-        : "http://localhost:8000/api";
+        : "https://ghnoticeboard.pythonanywhere.com/api";
 
 // "https://ghnoticeboard.pythonanywhere.com/api"
 // export const BASE_URL = "http://localhost:8000/api"

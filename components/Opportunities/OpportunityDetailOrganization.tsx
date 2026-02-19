@@ -6,9 +6,7 @@ import { motion } from "framer-motion";
 import {
     Building2,
     MapPin,
-    Link as LinkIcon,
     Users,
-    Briefcase,
     CheckCircle,
 } from "lucide-react";
 import { Opportunity } from "@/types/opportunities.types";
@@ -70,33 +68,6 @@ const OpportunityDetailOrganization = ({
                     <div className="flex items-center gap-2 text-slate-600 small-text">
                         <MapPin className="w-4 h-4 text-primary shrink-0" />
                         <span>{opportunity.location}</span>
-                    </div>
-
-                    {/* Posted By */}
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-200 shrink-0">
-                            {opportunity.posted_by.avatar ? (
-                                <Image
-                                    src={opportunity.posted_by.avatar}
-                                    alt={opportunity.posted_by.display_name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-primary text-white small-text-2 font-bold">
-                                    {opportunity.posted_by.full_name[0]}
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="small-text-2 text-slate-500">Posted by</p>
-                            <Link
-                                href={`/profile/${opportunity.posted_by.username}`}
-                                className="small-text font-semibold text-slate-900 hover:text-primary transition-colors truncate block"
-                            >
-                                {opportunity.posted_by.display_name}
-                            </Link>
-                        </div>
                     </div>
                 </div>
 

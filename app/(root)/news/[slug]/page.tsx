@@ -5,7 +5,6 @@ import {
     NewsDetailHero,
     NewsDetailMeta,
     NewsDetailContent,
-    NewsDetailAuthor,
     NewsDetailEngagement,
     NewsDetailShare,
     NewsDetailRelated,
@@ -59,16 +58,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 article.category?.name || 'News',
                 ...tagNames,
                 "Ghana news",
-                article.author.display_name,
             ],
-            authors: [{ name: article.author.display_name }],
             openGraph: {
                 title: article.title,
                 description: article.summary,
                 type: "article",
                 publishedTime: article.published_at || undefined,
                 modifiedTime: article.updated_at,
-                authors: [article.author.display_name],
                 images: article.featured_image
                     ? [
                           {
@@ -120,7 +116,7 @@ const NewsDetailPage = async ({ params }: Props) => {
                 <div className="inner-wrapper py-8 md:py-12">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Main Content Column */}
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className={`${relatedArticles.length > 0 ? "lg:col-span-8" : "lg:col-span-12"} space-y-8`}>
                             {/* Article Metadata */}
                             <NewsDetailMeta article={article} />
 
@@ -137,16 +133,11 @@ const NewsDetailPage = async ({ params }: Props) => {
                             <NewsDetailComments articleId={article.id} />
                         </div>
 
-                        {/* Sidebar Column */}
-                        <aside className="lg:col-span-4 space-y-6">
-                            {/* Author Card */}
-                            <NewsDetailAuthor author={article.author} />
-
-                            {/* Related Articles */}
-                            {relatedArticles.length > 0 && (
+                        {relatedArticles.length > 0 && (
+                            <aside className="lg:col-span-4 space-y-6">
                                 <NewsDetailRelated articles={relatedArticles} />
-                            )}
-                        </aside>
+                            </aside>
+                        )}
                     </div>
                 </div>
             </main>

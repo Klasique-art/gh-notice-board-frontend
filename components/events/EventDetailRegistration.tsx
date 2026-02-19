@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Heart, Share2, Bookmark, CheckCircle, Loader2 } from "lucide-react";
+import { ExternalLink, Heart, Share2, Bookmark, Loader2 } from "lucide-react";
 import { addBookmark, removeBookmark } from "@/app/lib/bookmarkInteractions";
 import { useToast } from "@/components/ui/ToastProvider";
 import { Event } from "@/types/events.types";
@@ -12,23 +12,18 @@ interface EventDetailRegistrationProps {
 }
 
 const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
-    const [isRegistered, setIsRegistered] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(Boolean(event.user_bookmarked));
     const [isBookmarkPending, setIsBookmarkPending] = useState(false);
     const [likesCount, setLikesCount] = useState(event.likes_count);
     const { showToast } = useToast();
+    const currency = event.currency || "GHS";
 
     const isFree = parseFloat(event.price) === 0;
     const spotsLeft = event.max_attendees
         ? event.max_attendees - event.registered_count
         : null;
     const isFull = spotsLeft !== null && spotsLeft <= 0;
-
-    const handleRegister = () => {
-        // In production, handle registration/payment
-        setIsRegistered(!isRegistered);
-    };
 
     const handleLike = () => {
         setIsLiked(!isLiked);
@@ -91,45 +86,34 @@ const EventDetailRegistration = ({ event }: EventDetailRegistrationProps) => {
             className="bg-linear-to-r from-primary/5 to-secondary/5 rounded-xl border-2 border-primary/20 p-6"
         >
             <div className="space-y-4">
-                {/* Registration Status */}
-                {isRegistered && (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-secondary/20 text-primary border border-secondary">
-                        <CheckCircle className="w-5 h-5" />
-                        <span className="normal-text font-semibold">
-                            You&apos;re registered for this event!
-                        </span>
-                    </div>
-                )}
-
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                     {/* Left: Registration Button */}
                     <div className="flex-1 min-w-50">
                         {event.registration_required ? (
-                            <button
-                                onClick={handleRegister}
-                                disabled={isFull && !isRegistered}
-                                className={`w-full py-3 px-6 rounded-lg font-bold normal-text transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 ${
-                                    isRegistered
-                                        ? "bg-secondary text-primary border-2 border-secondary"
-                                        : isFull
-                                        ? "bg-slate-300 text-slate-600 cursor-not-allowed"
-                                        : "bg-primary hover:bg-primary-100 text-white shadow-lg shadow-primary/30"
-                                }`}
-                            >
-                                {isRegistered ? (
-                                    <>
-                                        <CheckCircle className="w-5 h-5" />
-                                        Registered
-                                    </>
-                                ) : isFull ? (
-                                    "Event Full"
-                                ) : (
-                                    <>
-                                        <UserPlus className="w-5 h-5" />
-                                        {isFree ? "Register Free" : `Register - ${event.currency} ${parseFloat(event.price).toFixed(2)}`}
-                                    </>
-                                )}
-                            </button>
+                            event.registration_url ? (
+                                <a
+                                    href={event.registration_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`w-full py-3 px-6 rounded-lg font-bold normal-text transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 ${
+                                        isFull
+                                            ? "bg-slate-300 text-slate-600 cursor-not-allowed pointer-events-none"
+                                            : "bg-primary hover:bg-primary-100 text-white shadow-lg shadow-primary/30"
+                                    }`}
+                                    aria-disabled={isFull}
+                                >
+                                    <ExternalLink className="w-5 h-5" />
+                                    {isFull
+                                        ? "Event Full"
+                                        : isFree
+                                        ? "Get Free Ticket"
+                                        : `Buy Ticket - ${currency} ${parseFloat(event.price).toFixed(2)}`}
+                                </a>
+                            ) : (
+                                <div className="w-full py-3 px-6 rounded-lg font-bold normal-text bg-slate-100 text-slate-700 text-center border-2 border-slate-200">
+                                    Ticket link unavailable
+                                </div>
+                            )
                         ) : (
                             <div className="text-center py-3">
                                 <p className="normal-text font-semibold text-slate-700">

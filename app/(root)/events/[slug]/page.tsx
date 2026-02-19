@@ -5,7 +5,6 @@ import {
     EventDetailHero,
     EventDetailMeta,
     EventDetailDescription,
-    EventDetailOrganizer,
     EventDetailRegistration,
     EventDetailVenue,
     EventDetailShare,
@@ -64,9 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 event.event_type,
                 event.venue_name,
                 "Ghana events",
-                event.organizer.display_name,
             ],
-            authors: [{ name: event.organizer.display_name }],
             openGraph: {
                 title: event.title,
                 description: `${event.summary} | ${eventDate}`,
@@ -122,7 +119,7 @@ const EventDetailPage = async ({ params }: Props) => {
                 <div className="inner-wrapper py-8 md:py-12">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Main Content Column */}
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className={`${relatedEvents.length > 0 ? "lg:col-span-8" : "lg:col-span-12"} space-y-8`}>
                             {/* Event Metadata */}
                             <EventDetailMeta event={event} />
 
@@ -142,16 +139,11 @@ const EventDetailPage = async ({ params }: Props) => {
                             <EventDetailComments eventId={event.id} />
                         </div>
 
-                        {/* Sidebar Column */}
-                        <aside className="lg:col-span-4 space-y-6">
-                            {/* Organizer Card */}
-                            <EventDetailOrganizer organizer={event.organizer} />
-
-                            {/* Related Events */}
-                            {relatedEvents.length > 0 && (
+                        {relatedEvents.length > 0 && (
+                            <aside className="lg:col-span-4 space-y-6">
                                 <EventDetailRelated events={relatedEvents} />
-                            )}
-                        </aside>
+                            </aside>
+                        )}
                     </div>
                 </div>
             </main>

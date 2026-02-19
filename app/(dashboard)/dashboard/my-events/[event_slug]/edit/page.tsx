@@ -34,18 +34,27 @@ const EditEventPage = () => {
                     summary: data.summary || '',
                     description: data.description || '',
                     agenda: data.agenda || '',
-                    category: data.category || '',
+                    category: data.category?.id || data.category || '',
+                    tags_ids: Array.isArray(data.tags)
+                        ? data.tags.map((tag: { id?: string }) => tag.id).filter(Boolean)
+                        : [],
                     event_type: data.event_type || '',
                     start_date: data.start_date ? new Date(data.start_date).toISOString().slice(0, 16) : '',
                     end_date: data.end_date ? new Date(data.end_date).toISOString().slice(0, 16) : '',
+                    timezone: data.timezone || 'Africa/Accra',
                     venue_name: data.venue_name || '',
                     venue_address: data.venue_address || '',
                     venue_details: data.venue_details || '',
                     venue_map_url: data.venue_map_url || '',
+                    virtual_meeting_url: data.virtual_meeting_url || '',
+                    virtual_meeting_password: data.virtual_meeting_password || '',
                     featured_image: data.featured_image || null,
+                    featured_image_url: typeof data.featured_image === 'string' ? data.featured_image : '',
                     contact_email: data.contact_email || '',
                     contact_phone: data.contact_phone || '',
                     website_url: data.website_url || '',
+                    facebook_event_url: data.facebook_event_url || '',
+                    livestream_url: data.livestream_url || '',
                     registration_required: data.registration_required || false,
                     registration_url: data.registration_url || '',
                     registration_deadline: data.registration_deadline
@@ -55,7 +64,44 @@ const EditEventPage = () => {
                     allow_waitlist: data.allow_waitlist || false,
                     registration_instructions: data.registration_instructions || '',
                     price: data.price || '',
-                    is_free: data.is_free ?? true,
+                    early_bird_price: data.early_bird_price || '',
+                    early_bird_deadline: data.early_bird_deadline
+                        ? new Date(data.early_bird_deadline).toISOString().slice(0, 16)
+                        : '',
+                    cancellation_policy: data.cancellation_policy || '',
+                    covid_safety_measures: data.covid_safety_measures || '',
+                    parking_info: data.parking_info || '',
+                    accessibility_info: data.accessibility_info || '',
+                    is_featured: data.is_featured || false,
+                    is_trending: data.is_trending || false,
+                    status: data.status || 'published',
+                    featured_guests_data: Array.isArray(data.featured_guests)
+                        ? data.featured_guests.map((guest: unknown, index: number) => {
+                            const source = (guest || {}) as Record<string, unknown>;
+                            return {
+                                name: typeof source.name === 'string' ? source.name : '',
+                                title: typeof source.title === 'string' ? source.title : '',
+                                bio: typeof source.bio === 'string' ? source.bio : '',
+                                linkedin_url: typeof source.linkedin_url === 'string' ? source.linkedin_url : '',
+                                twitter_username: typeof source.twitter_username === 'string' ? source.twitter_username : '',
+                                website: typeof source.website === 'string' ? source.website : '',
+                                order: typeof source.order === 'number' ? source.order : index,
+                            };
+                        })
+                        : [],
+                    sponsors_data: Array.isArray(data.sponsors)
+                        ? data.sponsors.map((sponsor: unknown, index: number) => {
+                            const source = (sponsor || {}) as Record<string, unknown>;
+                            return {
+                                name: typeof source.name === 'string' ? source.name : '',
+                                website: typeof source.website === 'string' ? source.website : '',
+                                description: typeof source.description === 'string' ? source.description : '',
+                                sponsorship_level: typeof source.sponsorship_level === 'string' ? source.sponsorship_level : '',
+                                order: typeof source.order === 'number' ? source.order : index,
+                            };
+                        })
+                        : [],
+                    is_free: parseFloat(data.price || '0') === 0,
                 };
 
                 setEventData(formData);

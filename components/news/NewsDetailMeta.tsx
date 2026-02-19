@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Eye, MessageCircle } from "lucide-react";
 import { NewsArticleDetail } from "@/types/news.types";
@@ -48,62 +46,7 @@ const NewsDetailMeta = ({ article }: NewsDetailMetaProps) => {
             transition={{ duration: 0.5 }}
             className="bg-white rounded-xl border-2 border-slate-200 p-6"
         >
-            <div className="space-y-6">
-                {/* Author Info */}
-                <div className="flex items-center gap-4">
-                    {/* Author Avatar */}
-                    <Link
-                        href={`/profile/${article.author.username}`}
-                        className="relative w-14 h-14 rounded-full overflow-hidden bg-slate-200 shrink-0 ring-2 ring-primary/20 hover:ring-primary transition-all duration-300"
-                    >
-                        {article.author.avatar ? (
-                            <Image
-                                src={article.author.avatar}
-                                alt={article.author.full_name}
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-primary text-white normal-text font-bold">
-                                {article.author.display_name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .slice(0, 2)
-                                    .join("")
-                                    .toUpperCase()}
-                            </div>
-                        )}
-                    </Link>
-
-                    {/* Author Details */}
-                    <div className="flex-1 min-w-0">
-                        <Link
-                            href={`/profile/${article.author.username}`}
-                            className="block group"
-                        >
-                            <div className="flex items-center gap-2">
-                                <h3 className="normal-text font-bold text-slate-900 group-hover:text-primary transition-colors">
-                                    {article.author.display_name}
-                                </h3>
-                                {article.author.is_verified && (
-                                    <span
-                                        className="text-secondary"
-                                        title="Verified"
-                                    >
-                                        {article.author.verification_badge}
-                                    </span>
-                                )}
-                            </div>
-                            <p className="small-text text-slate-600">
-                                {article.author.profile?.occupation || "Writer"} at {article.author.profile?.company || "Ghana Notice Board"}
-                            </p>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-slate-200" />
-
+            <div>
                 {/* Article Metadata */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {/* Published Date */}

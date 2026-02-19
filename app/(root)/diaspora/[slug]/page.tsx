@@ -28,7 +28,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: post.summary,
       images: post.featured_image ? [{ url: post.featured_image }] : [],
       type: "article",
-      authors: [post.is_diaspora_author ? post.organization_name : "Ghana Notice Board"],
     },
     twitter: {
       card: "summary_large_image",

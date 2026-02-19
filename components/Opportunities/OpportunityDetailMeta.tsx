@@ -80,9 +80,6 @@ const OpportunityDetailMeta = ({ opportunity }: OpportunityDetailMetaProps) => {
                                 </span>
                             )}
                         </div>
-                        <p className="small-text text-slate-600">
-                            Posted by {opportunity.posted_by.display_name}
-                        </p>
                     </div>
                 </div>
 
